@@ -30,8 +30,7 @@ app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-// Auth routes mounted in Plan 02:
-// app.use('/api/auth', require('./routes/auth'));
+app.use('/api/auth', require('./routes/auth'));
 
 // ── 404 catch-all ─────────────────────────────────────────────────────────────
 app.use((_req, res) => {
