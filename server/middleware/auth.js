@@ -3,6 +3,9 @@
 const { jwtVerify } = require('jose');
 const db = require('../db');
 
+if (!process.env.JWT_SECRET) {
+  throw new Error('[auth] JWT_SECRET must be set before this module is loaded.');
+}
 const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET);
 
 /**

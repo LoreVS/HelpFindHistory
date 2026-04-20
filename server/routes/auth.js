@@ -9,6 +9,9 @@ const db = require('../db');
 const router = express.Router();
 
 const SALT_ROUNDS  = 12;
+if (!process.env.JWT_SECRET) {
+  throw new Error('[auth] JWT_SECRET must be set before this module is loaded.');
+}
 const JWT_SECRET   = new TextEncoder().encode(process.env.JWT_SECRET);
 const JWT_EXPIRES  = process.env.JWT_EXPIRES_IN || '7d';
 
