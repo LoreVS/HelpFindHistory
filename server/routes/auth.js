@@ -12,6 +12,10 @@ const SALT_ROUNDS  = 12;
 const JWT_SECRET   = new TextEncoder().encode(process.env.JWT_SECRET);
 const JWT_EXPIRES  = process.env.JWT_EXPIRES_IN || '7d';
 
+// Precomputed dummy hash — used in login to ensure constant-time comparison
+// even when the user is not found, preventing user-enumeration timing attacks.
+const DUMMY_HASH = bcrypt.hashSync('__dummy__', SALT_ROUNDS);
+
 // Helper: sign a JWT for a user row
 async function signToken(user) {
   return new SignJWT({ sub: String(user.id), role: user.role })
@@ -72,8 +76,14 @@ router.post('/login', async (req, res) => {
       typeof email === 'string' ? email.trim() : ''
     );
 
-    // Use constant-time comparison to prevent user-enumeration timing attacks
-    const passwordMatch = user ? await bcrypt.compare(password, user.password) : false;
+    // Use constant-time comparison to prevent user-enumeration timing attacks.
+    // Always call bcrypt.compare (against DUMMY_HASH when no user found) so both
+    // code paths take the same amount of time, preventing timing-based enumeration.
+    const candidateHash = user ? user.password : DUMMY_HASH;
+    const passwordMatch = await bcrypt.compare(
+      typeof password === 'string' ? password : '',
+      candidateHash
+    );
     if (!user || !passwordMatch) {
       return res.status(401).json({ error: 'Invalid email or password.' });
     }
