@@ -3,9 +3,9 @@
 ## Current Position
 
 Phase: 1 — Backend Foundation
-Plan: 01 complete, 02 next
-Status: In progress (1 of 2 plans complete)
-Last activity: 2026-04-20 — Plan 01 complete (server scaffold, schema, admin seed)
+Plan: 02 complete, phase complete
+Status: Complete (2 of 2 plans complete)
+Last activity: 2026-04-20 — Plan 02 complete (auth endpoints, JWT middleware, token denylist)
 
 ## Progress Bar
 
@@ -33,10 +33,14 @@ Last activity: 2026-04-20 — Plan 01 complete (server scaffold, schema, admin s
 - better-sqlite3 (synchronous) chosen as SQLite driver over async sqlite3
 - CORS origin pinned to http://localhost:5173 (Vite dev origin), not wildcard
 - JWT_SECRET guard: server exits with code 1 at startup if not set
+- SALT_ROUNDS=12 for bcrypt (secure default, acceptable latency on local hardware)
+- role='user' hardcoded in register INSERT — no API parameter accepted (elevation-of-privilege mitigation)
+- Constant-time bcrypt.compare used even on unknown email to prevent timing-based user enumeration
+- requireRole factory pattern allows RBAC composition with requireAuth in later phases
 
 ## Blockers
 
 None.
 
 ---
-_Last updated: 2026-04-20 — Plan 01-01 complete: server scaffold, SQLite schema, admin seed_
+_Last updated: 2026-04-20 — Plan 01-02 complete: auth endpoints (register/login/logout), JWT middleware, token denylist. Phase 1 complete._

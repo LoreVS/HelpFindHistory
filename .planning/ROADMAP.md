@@ -10,7 +10,7 @@
 
 ## Phases
 
-- [ ] **Phase 1: Backend Foundation** — Express server, SQLite schema, auth API endpoints (register/login/logout + JWT issuance)
+- [x] **Phase 1: Backend Foundation** — Express server, SQLite schema, auth API endpoints (register/login/logout + JWT issuance)
 - [ ] **Phase 2: Frontend Auth** — Login/signup screens, protected routes, JWT client-side storage, role-based UI gating
 - [ ] **Phase 3: Admin — Project Management** — Admin creates projects, uploads fragments, saves project state, views and closes projects
 - [ ] **Phase 4: Collaboration** — Users browse and open open projects, work on reconstruction canvas, save and publish attempts, view closed projects
@@ -33,7 +33,7 @@
 **Plans:** 2 plans
 Plans:
 - [x] 01-01-PLAN.md — Server scaffold, SQLite schema (6 tables), Express health-check, admin seed
-- [ ] 01-02-PLAN.md — Auth routes (register/login/logout), JWT middleware, token denylist
+- [x] 01-02-PLAN.md — Auth routes (register/login/logout), JWT middleware, token denylist
 
 ### Phase 2: Frontend Auth
 **Goal**: The React app is fully locked behind authentication — unauthenticated visitors are redirected to a login screen, authenticated users stay logged in across reloads, and admin-only controls are hidden from regular users.
@@ -91,7 +91,7 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Backend Foundation | 1/2 | In progress | - |
+| 1. Backend Foundation | 2/2 | Complete | 2026-04-20 |
 | 2. Frontend Auth | 0/? | Not started | - |
 | 3. Admin — Project Management | 0/? | Not started | - |
 | 4. Collaboration | 0/? | Not started | - |
@@ -132,4 +132,4 @@ Plans:
 ---
 
 _Created: 2026-04-20_
-_Updated: 2026-04-20 — Phase 1 planned (2 plans)_
+_Updated: 2026-04-20 — Phase 1 complete (2/2 plans done: server scaffold + auth endpoints)_
