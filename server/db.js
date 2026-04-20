@@ -14,12 +14,15 @@ fs.mkdirSync(path.dirname(resolvedPath), { recursive: true });
 const db = new Database(resolvedPath);
 
 // Apply schema — all statements use IF NOT EXISTS so this is safe to call on every startup
+// Use db.pragma() (idiomatic better-sqlite3 API) and db.exec() for DDL so that
+// multi-statement SQL (triggers, BEGIN…END blocks, string literals with semicolons)
+// is handled correctly without fragile manual splitting.
+db.pragma('journal_mode = WAL');
+db.pragma('foreign_keys = ON');
+
 const schema = fs.readFileSync(path.join(__dirname, 'schema.sql'), 'utf8');
-db.prepare('PRAGMA journal_mode=WAL').run();
-db.prepare('PRAGMA foreign_keys=ON').run();
-// Run schema DDL statements (splitting on semicolons, skipping PRAGMA lines already applied)
-schema.split(';').map(s => s.trim()).filter(s => s.length > 0 && !s.startsWith('PRAGMA')).forEach(s => {
-  db.prepare(s).run();
-});
+// Strip PRAGMA lines already applied above, then execute all DDL atomically:
+const ddl = schema.replace(/^\s*PRAGMA[^;]+;\s*/gim, '').trim();
+db.exec(ddl);
 
 module.exports = db;
