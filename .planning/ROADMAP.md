@@ -30,7 +30,10 @@
   3. A POST to `/api/auth/login` with correct credentials returns a valid JWT; incorrect credentials return a 401
   4. A POST to `/api/auth/logout` invalidates the session server-side (or client token is cleared via response)
   5. The admin account exists in the database on first server run with role `admin`; all self-registered accounts receive role `user`
-**Plans**: TBD
+**Plans:** 2 plans
+Plans:
+- [x] 01-01-PLAN.md — Server scaffold, SQLite schema (6 tables), Express health-check, admin seed
+- [ ] 01-02-PLAN.md — Auth routes (register/login/logout), JWT middleware, token denylist
 
 ### Phase 2: Frontend Auth
 **Goal**: The React app is fully locked behind authentication — unauthenticated visitors are redirected to a login screen, authenticated users stay logged in across reloads, and admin-only controls are hidden from regular users.
@@ -88,7 +91,7 @@
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Backend Foundation | 0/? | Not started | - |
+| 1. Backend Foundation | 1/2 | In progress | - |
 | 2. Frontend Auth | 0/? | Not started | - |
 | 3. Admin — Project Management | 0/? | Not started | - |
 | 4. Collaboration | 0/? | Not started | - |
@@ -129,3 +132,4 @@
 ---
 
 _Created: 2026-04-20_
+_Updated: 2026-04-20 — Phase 1 planned (2 plans)_

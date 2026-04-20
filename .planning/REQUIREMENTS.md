@@ -15,7 +15,7 @@
 
 ### Roles
 
-- [ ] **ROLE-01**: Admin account is seeded on first server run (email + password configurable via env)
+- [x] **ROLE-01**: Admin account is seeded on first server run (email + password configurable via env)
 - [ ] **ROLE-02**: New self-registered users receive the 'user' role automatically
 - [ ] **ROLE-03**: Admin-only UI controls are hidden from regular users
 
@@ -80,7 +80,7 @@
 | AUTH-03 | Phase 1 | Pending |
 | AUTH-04 | Phase 2 | Pending |
 | AUTH-05 | Phase 2 | Pending |
-| ROLE-01 | Phase 1 | Pending |
+| ROLE-01 | Phase 1 | Complete (01-01) |
 | ROLE-02 | Phase 1 | Pending |
 | ROLE-03 | Phase 2 | Pending |
 | PROJ-01 | Phase 3 | Pending |

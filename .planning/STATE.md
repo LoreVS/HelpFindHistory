@@ -3,9 +3,9 @@
 ## Current Position
 
 Phase: 1 — Backend Foundation
-Plan: —
-Status: Roadmap created, ready to begin Phase 1
-Last activity: 2026-04-20 — Roadmap created for v1.1
+Plan: 01 complete, 02 next
+Status: In progress (1 of 2 plans complete)
+Last activity: 2026-04-20 — Plan 01 complete (server scaffold, schema, admin seed)
 
 ## Progress Bar
 
@@ -28,12 +28,15 @@ Last activity: 2026-04-20 — Roadmap created for v1.1
 
 - Fresh phase numbering starting at 1 for milestone v1.1 (v1.0 treated as Phase 0 / pre-milestone)
 - AUTH-05 (JWT client-side persistence) assigned to Phase 2 — client concern, depends on Phase 1 backend issuing tokens
-- SQLite schema covers: users, projects, fragments, attempts, scores
-- New `/server` or `/api` directory for Express backend alongside existing React frontend
+- SQLite schema covers: users, projects, fragments, attempts, scores, token_denylist (6 tables)
+- New `/server` directory created for Express backend alongside existing React frontend
+- better-sqlite3 (synchronous) chosen as SQLite driver over async sqlite3
+- CORS origin pinned to http://localhost:5173 (Vite dev origin), not wildcard
+- JWT_SECRET guard: server exits with code 1 at startup if not set
 
 ## Blockers
 
 None.
 
 ---
-_Last updated: 2026-04-20_
+_Last updated: 2026-04-20 — Plan 01-01 complete: server scaffold, SQLite schema, admin seed_
