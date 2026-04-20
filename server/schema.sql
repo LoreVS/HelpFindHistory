@@ -46,8 +46,12 @@ CREATE TABLE IF NOT EXISTS scores (
   attempt_id   INTEGER NOT NULL REFERENCES attempts(id),
   project_id   INTEGER NOT NULL REFERENCES projects(id),
   points       INTEGER NOT NULL DEFAULT 1,
-  awarded_at   TEXT    NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now'))
+  awarded_at   TEXT    NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now')),
+  UNIQUE(user_id, attempt_id)
 );
+
+-- For existing databases where the table was created without the UNIQUE constraint:
+CREATE UNIQUE INDEX IF NOT EXISTS idx_scores_unique ON scores(user_id, attempt_id);
 
 CREATE TABLE IF NOT EXISTS token_denylist (
   jti        TEXT    NOT NULL PRIMARY KEY,
