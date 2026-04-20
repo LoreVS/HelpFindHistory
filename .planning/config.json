@@ -1,0 +1,17 @@
+{
+  "project": {
+    "name": "Puzzle Forge",
+    "code": "PF",
+    "workspace": "vortex"
+  },
+  "workflow": {
+    "research": false,
+    "text_mode": false,
+    "commit_docs": true
+  },
+  "models": {
+    "researcher": "claude-sonnet-4-6",
+    "synthesizer": "claude-sonnet-4-6",
+    "roadmapper": "claude-sonnet-4-6"
+  }
+}
