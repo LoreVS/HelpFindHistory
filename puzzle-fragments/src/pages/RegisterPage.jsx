@@ -18,7 +18,7 @@ export default function RegisterPage() {
   async function handleSubmit(e) {
     e.preventDefault()
     if (!email.trim() || !password || !confirmPassword) {
-      setError('email and password are required')
+      setError('all fields are required')
       return
     }
     if (password !== confirmPassword) {
