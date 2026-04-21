@@ -3,9 +3,9 @@
 ## Current Position
 
 Phase: 2 — Frontend Auth
-Plan: —
-Status: Ready to plan
-Last activity: 2026-04-20 — Phase 1 complete and verified (human approved)
+Plan: 02-01 complete
+Status: Executing — next plan 02-02
+Last activity: 2026-04-21 — Plan 02-01 complete (auth state layer: authStore + useRole + react-router-dom)
 
 ## Progress Bar
 
@@ -37,10 +37,14 @@ Last activity: 2026-04-20 — Phase 1 complete and verified (human approved)
 - role='user' hardcoded in register INSERT — no API parameter accepted (elevation-of-privilege mitigation)
 - Constant-time bcrypt.compare used even on unknown email to prevent timing-based user enumeration
 - requireRole factory pattern allows RBAC composition with requireAuth in later phases
+- persist middleware partializes to token+user only — initialized flag always starts false on boot (never persisted)
+- atob(token.split('.')[1]) for JWT decode in init() — no external library needed, exp*1000 vs Date.now()
+- try/catch in authStore.init() clears malformed tokens silently (T-02-01 threat mitigation)
+- useRole uses named export consistent with useBackgroundRemoval hook pattern
 
 ## Blockers
 
 None.
 
 ---
-_Last updated: 2026-04-20 — Plan 01-02 complete: auth endpoints (register/login/logout), JWT middleware, token denylist. Phase 1 complete._
+_Last updated: 2026-04-21 — Plan 02-01 complete: authStore.js (Zustand persist), useRole.js hook, react-router-dom installed. Next: 02-02 auth UI components._
