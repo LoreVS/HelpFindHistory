@@ -10,14 +10,14 @@
 - [x] **AUTH-01**: User can register with email and password
 - [x] **AUTH-02**: User can log in with email and password
 - [x] **AUTH-03**: User can log out
-- [ ] **AUTH-04**: Unauthenticated users are redirected to the login screen
-- [ ] **AUTH-05**: Session persists across page reloads (JWT stored client-side)
+- [x] **AUTH-04**: Unauthenticated users are redirected to the login screen
+- [x] **AUTH-05**: Session persists across page reloads (JWT stored client-side)
 
 ### Roles
 
 - [x] **ROLE-01**: Admin account is seeded on first server run (email + password configurable via env)
 - [x] **ROLE-02**: New self-registered users receive the 'user' role automatically
-- [ ] **ROLE-03**: Admin-only UI controls are hidden from regular users
+- [x] **ROLE-03**: Admin-only UI controls are hidden from regular users
 
 ### Projects
 
@@ -78,11 +78,11 @@
 | AUTH-01 | Phase 1 | Complete (01-02) |
 | AUTH-02 | Phase 1 | Complete (01-02) |
 | AUTH-03 | Phase 1 | Complete (01-02) |
-| AUTH-04 | Phase 2 | Pending |
-| AUTH-05 | Phase 2 | Pending |
+| AUTH-04 | Phase 2 | Complete (02-02, 02-03) |
+| AUTH-05 | Phase 2 | Complete (02-01, 02-03) |
 | ROLE-01 | Phase 1 | Complete (01-01) |
 | ROLE-02 | Phase 1 | Complete (01-02) |
-| ROLE-03 | Phase 2 | Pending |
+| ROLE-03 | Phase 2 | Complete (02-01, 02-03) |
 | PROJ-01 | Phase 3 | Pending |
 | PROJ-02 | Phase 3 | Pending |
 | PROJ-03 | Phase 3 | Pending |
@@ -106,4 +106,4 @@
 
 ---
 *Requirements defined: 2026-04-20*
-*Last updated: 2026-04-20 — roadmap created, all requirements mapped*
+*Last updated: 2026-04-21 — Phase 2 complete: AUTH-04, AUTH-05, ROLE-03 satisfied

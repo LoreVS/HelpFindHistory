@@ -11,7 +11,7 @@
 ## Phases
 
 - [x] **Phase 1: Backend Foundation** — Express server, SQLite schema, auth API endpoints (register/login/logout + JWT issuance)
-- [ ] **Phase 2: Frontend Auth** — Login/signup screens, protected routes, JWT client-side storage, role-based UI gating
+- [x] **Phase 2: Frontend Auth** — Login/signup screens, protected routes, JWT client-side storage, role-based UI gating
 - [ ] **Phase 3: Admin — Project Management** — Admin creates projects, uploads fragments, saves project state, views and closes projects
 - [ ] **Phase 4: Collaboration** — Users browse and open open projects, work on reconstruction canvas, save and publish attempts, view closed projects
 - [ ] **Phase 5: Scoring** — Admin reviews/approves/rejects published attempts, points awarded to solvers, users see accumulated score
@@ -44,8 +44,11 @@ Plans:
   2. A user who logs in and reloads the page remains logged in (JWT persisted in localStorage or equivalent)
   3. A regular user sees no admin-only UI controls (create project button, approval tools, etc.)
   4. A user can sign up via the registration screen and is automatically logged in with the `user` role
-**Plans**: TBD
-**UI hint**: yes
+**Plans:** 3 plans
+Plans:
+- [x] 02-01-PLAN.md — Install react-router-dom, create authStore (Zustand persist), create useRole hook
+- [x] 02-02-PLAN.md — Create ProtectedRoute + PublicOnlyRoute guards, LoginPage, RegisterPage
+- [x] 02-03-PLAN.md — Wire BrowserRouter in main.jsx, rewrite App.jsx with route tree + header additions, add auth CSS
 
 ### Phase 3: Admin — Project Management
 **Goal**: Authenticated admins can create reconstruction projects, upload fragment photos to them, save project state, and close projects once a correct attempt exists.
@@ -92,7 +95,7 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Backend Foundation | 2/2 | Complete | 2026-04-20 |
-| 2. Frontend Auth | 0/? | Not started | - |
+| 2. Frontend Auth | 3/3 | Complete | 2026-04-21 |
 | 3. Admin — Project Management | 0/? | Not started | - |
 | 4. Collaboration | 0/? | Not started | - |
 | 5. Scoring | 0/? | Not started | - |
@@ -133,3 +136,4 @@ Plans:
 
 _Created: 2026-04-20_
 _Updated: 2026-04-20 — Phase 1 complete (2/2 plans done: server scaffold + auth endpoints)_
+_Updated: 2026-04-21 — Phase 2 complete (3/3 plans: auth store, auth UI components, app wiring)
