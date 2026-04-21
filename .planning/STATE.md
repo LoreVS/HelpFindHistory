@@ -3,9 +3,9 @@
 ## Current Position
 
 Phase: 2 — Frontend Auth
-Plan: 02-02 complete
-Status: Executing — next plan 02-03
-Last activity: 2026-04-21 — Plan 02-02 complete (auth UI components: ProtectedRoute, LoginPage, RegisterPage)
+Plan: 02-03 complete
+Status: Phase 2 execution complete — all 3 plans done
+Last activity: 2026-04-21 — Plan 02-03 complete (BrowserRouter + route tree + auth CSS integration)
 
 ## Progress Bar
 
@@ -45,10 +45,14 @@ Last activity: 2026-04-21 — Plan 02-02 complete (auth UI components: Protected
 - PublicOnlyRoute prevents authenticated users from revisiting /login or /register
 - confirmPassword field value never sent to server (T-02-09 mitigation)
 - pages/ directory created as new convention for full-page route components
+- CanvasApp extracted as inner component in App.jsx so router hooks work inside router context
+- init() called at module scope in main.jsx before createRoot — initialized=true before any route guard renders
+- Admin badge uses conditional JSX (role==='admin'), not CSS — no DOM node for non-admin users
+- END SESSION calls logout() + navigate('/login') — immediate redirect, no confirmation dialog
 
 ## Blockers
 
 None.
 
 ---
-_Last updated: 2026-04-21 — Plan 02-02 complete: ProtectedRoute.jsx, LoginPage.jsx, RegisterPage.jsx. Next: 02-03 router wiring._
+_Last updated: 2026-04-21 — Plan 02-03 complete: App.css auth styles, App.jsx route tree, main.jsx BrowserRouter + init(). Phase 2 frontend auth complete._
