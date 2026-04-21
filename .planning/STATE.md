@@ -3,9 +3,9 @@
 ## Current Position
 
 Phase: 2 — Frontend Auth
-Plan: 02-01 complete
-Status: Executing — next plan 02-02
-Last activity: 2026-04-21 — Plan 02-01 complete (auth state layer: authStore + useRole + react-router-dom)
+Plan: 02-02 complete
+Status: Executing — next plan 02-03
+Last activity: 2026-04-21 — Plan 02-02 complete (auth UI components: ProtectedRoute, LoginPage, RegisterPage)
 
 ## Progress Bar
 
@@ -41,10 +41,14 @@ Last activity: 2026-04-21 — Plan 02-01 complete (auth state layer: authStore +
 - atob(token.split('.')[1]) for JWT decode in init() — no external library needed, exp*1000 vs Date.now()
 - try/catch in authStore.init() clears malformed tokens silently (T-02-01 threat mitigation)
 - useRole uses named export consistent with useBackgroundRemoval hook pattern
+- ProtectedRoute renders null while !initialized — prevents auth flash at app boot
+- PublicOnlyRoute prevents authenticated users from revisiting /login or /register
+- confirmPassword field value never sent to server (T-02-09 mitigation)
+- pages/ directory created as new convention for full-page route components
 
 ## Blockers
 
 None.
 
 ---
-_Last updated: 2026-04-21 — Plan 02-01 complete: authStore.js (Zustand persist), useRole.js hook, react-router-dom installed. Next: 02-02 auth UI components._
+_Last updated: 2026-04-21 — Plan 02-02 complete: ProtectedRoute.jsx, LoginPage.jsx, RegisterPage.jsx. Next: 02-03 router wiring._
