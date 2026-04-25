@@ -1,13 +1,16 @@
-import { Routes, Route, useNavigate } from 'react-router-dom'
+import { Routes, Route, Navigate, useNavigate } from 'react-router-dom'
 import Dropzone from './components/Dropzone'
 import FragmentCanvas from './components/FragmentCanvas'
 import ProtectedRoute, { PublicOnlyRoute } from './components/ProtectedRoute'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
+import ProjectsPage from './pages/ProjectsPage'
+import ProjectDetailPage from './pages/ProjectDetailPage'
 import { useRole } from './hooks/useRole'
 import useAuthStore from './store/authStore'
 import './App.css'
 
+// Original canvas — kept at /canvas for backwards compat (D-03)
 function CanvasApp() {
   const role = useRole()
   const token = useAuthStore((state) => state.token)
@@ -52,7 +55,13 @@ export default function App() {
   return (
     <Routes>
       <Route element={<ProtectedRoute />}>
-        <Route path="/" element={<CanvasApp />} />
+        {/* D-01: / redirects to /projects */}
+        <Route path="/" element={<Navigate to="/projects" replace />} />
+        {/* D-02: primary project routes */}
+        <Route path="/projects" element={<ProjectsPage />} />
+        <Route path="/projects/:id" element={<ProjectDetailPage />} />
+        {/* D-03: original canvas kept for backwards compat */}
+        <Route path="/canvas" element={<CanvasApp />} />
       </Route>
       <Route element={<PublicOnlyRoute />}>
         <Route path="/login" element={<LoginPage />} />
