@@ -3,9 +3,9 @@
 ## Current Position
 
 Phase: 3 — Admin Project Management
-Plan: 1 of 4 complete
-Status: Executing — Phase 3, Wave 1 in progress
-Last activity: 2026-04-25 — Phase 3, Plan 1 complete: Backend Project & Fragment API Routes
+Plan: 2 of 4 complete
+Status: Executing — Phase 3, Wave 2 in progress
+Last activity: 2026-04-25 — Phase 3, Plan 2 complete: Frontend Project Store + App Routing
 
 ## Progress Bar
 
@@ -53,10 +53,14 @@ Last activity: 2026-04-25 — Phase 3, Plan 1 complete: Backend Project & Fragme
 - init() called at module scope in main.jsx before createRoot — initialized=true before any route guard renders
 - Admin badge uses conditional JSX (role==='admin'), not CSS — no DOM node for non-admin users
 - END SESSION calls logout() + navigate('/login') — immediate redirect, no confirmation dialog
+- authHeaders() reads token via useAuthStore.getState().token on every request — ensures fresh token (T-03-09 mitigation)
+- No persist middleware on useProjectStore — project state is session-scoped, re-fetched from API on load
+- / redirects to /projects via Navigate replace — no history pollution (D-01)
+- /canvas kept for backwards compatibility alongside new /projects routes (D-03)
 
 ## Blockers
 
 None.
 
 ---
-_Last updated: 2026-04-25 — Phase 3, Plan 1 complete: Backend Project & Fragment API Routes (6 REST routes, multer upload, static file serving)._
+_Last updated: 2026-04-25 — Phase 3, Plan 2 complete: Frontend Project Store + App Routing (useProjectStore, /projects and /projects/:id routes)._
