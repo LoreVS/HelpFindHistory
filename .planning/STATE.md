@@ -3,9 +3,9 @@
 ## Current Position
 
 Phase: 3 — Admin Project Management
-Plan: 2 of 4 complete
-Status: Executing — Phase 3, Wave 2 in progress
-Last activity: 2026-04-25 — Phase 3, Plan 2 complete: Frontend Project Store + App Routing
+Plan: 3 of 4 complete
+Status: Executing — Phase 3, Wave 3 in progress
+Last activity: 2026-04-25 — Phase 3, Plan 3 complete: ProjectsPage UI
 
 ## Progress Bar
 
@@ -57,10 +57,14 @@ Last activity: 2026-04-25 — Phase 3, Plan 2 complete: Frontend Project Store +
 - No persist middleware on useProjectStore — project state is session-scoped, re-fetched from API on load
 - / redirects to /projects via Navigate replace — no history pollution (D-01)
 - /canvas kept for backwards compatibility alongside new /projects routes (D-03)
+- New Project button visibility gated by role === 'admin' — no DOM node for non-admin users (T-03-10 Spoofing mitigation)
+- Inline toggle form (showForm state) for New Project rather than modal or separate route
+- Description truncated at 120 chars in card grid for uniform card height
+- .card-status--open (green) and .card-status--closed (muted) for visually distinct project status badges
 
 ## Blockers
 
 None.
 
 ---
-_Last updated: 2026-04-25 — Phase 3, Plan 2 complete: Frontend Project Store + App Routing (useProjectStore, /projects and /projects/:id routes)._
+_Last updated: 2026-04-25 — Phase 3, Plan 3 complete: ProjectsPage UI (card grid, New Project form, status badges)._

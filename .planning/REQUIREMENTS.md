@@ -21,10 +21,10 @@
 
 ### Projects
 
-- [ ] **PROJ-01**: Admin can create a project with a name and description
+- [x] **PROJ-01**: Admin can create a project with a name and description
 - [ ] **PROJ-02**: Admin can upload fragment photos to a project
 - [ ] **PROJ-03**: Admin can save project state (fragment layout/metadata)
-- [ ] **PROJ-04**: Admin can view all projects and their published attempts
+- [x] **PROJ-04**: Admin can view all projects and their published attempts
 - [ ] **PROJ-05**: Admin can close a project after approving a correct attempt
 
 ### Collaboration
@@ -83,10 +83,10 @@
 | ROLE-01 | Phase 1 | Complete (01-01) |
 | ROLE-02 | Phase 1 | Complete (01-02) |
 | ROLE-03 | Phase 2 | Complete (02-01, 02-03) |
-| PROJ-01 | Phase 3 | Pending |
+| PROJ-01 | Phase 3 | Complete (03-03) |
 | PROJ-02 | Phase 3 | Pending |
 | PROJ-03 | Phase 3 | Pending |
-| PROJ-04 | Phase 3 | Pending |
+| PROJ-04 | Phase 3 | Complete (03-03) |
 | PROJ-05 | Phase 3 | Pending |
 | COLLAB-01 | Phase 4 | Pending |
 | COLLAB-02 | Phase 4 | Pending |
@@ -106,4 +106,4 @@
 
 ---
 *Requirements defined: 2026-04-20*
-*Last updated: 2026-04-21 — Phase 2 complete: AUTH-04, AUTH-05, ROLE-03 satisfied
+*Last updated: 2026-04-25 — Phase 3 Plan 3 complete: PROJ-01, PROJ-04 satisfied (03-03)*

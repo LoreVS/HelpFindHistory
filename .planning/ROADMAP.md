@@ -64,7 +64,7 @@ Plans:
 Plans:
 - [x] 03-01-PLAN.md — Backend: projects router (6 API routes), multer upload, static file serving
 - [x] 03-02-PLAN.md — Frontend: useProjectStore (API actions), App.jsx route tree update
-- [ ] 03-03-PLAN.md — Frontend: ProjectsPage (/projects) with card grid, New Project form
+- [x] 03-03-PLAN.md — Frontend: ProjectsPage (/projects) with card grid, New Project form
 - [ ] 03-04-PLAN.md — Frontend: ProjectDetailPage (/projects/:id), ProjectDropzone, Save Layout, Close Project, attempts list
 
 ### Phase 4: Collaboration
@@ -100,7 +100,7 @@ Plans:
 |-------|----------------|--------|-----------|
 | 1. Backend Foundation | 2/2 | Complete | 2026-04-20 |
 | 2. Frontend Auth | 3/3 | Complete | 2026-04-21 |
-| 3. Admin — Project Management | 2/4 | In progress | - |
+| 3. Admin — Project Management | 3/4 | In progress | - |
 | 4. Collaboration | 0/? | Not started | - |
 | 5. Scoring | 0/? | Not started | - |
 
@@ -144,3 +144,4 @@ _Updated: 2026-04-21 — Phase 2 complete (3/3 plans: auth store, auth UI compon
 _Updated: 2026-04-21 — Phase 3 planned (4 plans: backend API, store+routing, ProjectsPage, ProjectDetailPage)_
 _Updated: 2026-04-25 — Phase 3 Plan 1 complete (1/4 plans: backend projects router + multer upload)_
 _Updated: 2026-04-25 — Phase 3 Plan 2 complete (2/4 plans: useProjectStore + App.jsx route tree)_
+_Updated: 2026-04-25 — Phase 3 Plan 3 complete (3/4 plans: ProjectsPage card grid + New Project form + CSS)_
