@@ -60,8 +60,12 @@ Plans:
   3. Admin can save the current fragment layout/metadata and reload the project to find it unchanged
   4. Admin can view a list of all projects and drill into any project to see its published attempts
   5. Admin can close a project, after which it becomes read-only and its status updates visibly
-**Plans**: TBD
-**UI hint**: yes
+**Plans:** 4 plans
+Plans:
+- [x] 03-01-PLAN.md — Backend: projects router (6 API routes), multer upload, static file serving
+- [ ] 03-02-PLAN.md — Frontend: useProjectStore (API actions), App.jsx route tree update
+- [ ] 03-03-PLAN.md — Frontend: ProjectsPage (/projects) with card grid, New Project form
+- [ ] 03-04-PLAN.md — Frontend: ProjectDetailPage (/projects/:id), ProjectDropzone, Save Layout, Close Project, attempts list
 
 ### Phase 4: Collaboration
 **Goal**: Regular users can browse open projects, open a project's reconstruction canvas, save an in-progress attempt, publish a completed attempt, and view the approved solution for closed projects.
@@ -96,7 +100,7 @@ Plans:
 |-------|----------------|--------|-----------|
 | 1. Backend Foundation | 2/2 | Complete | 2026-04-20 |
 | 2. Frontend Auth | 3/3 | Complete | 2026-04-21 |
-| 3. Admin — Project Management | 0/? | Not started | - |
+| 3. Admin — Project Management | 1/4 | In progress | - |
 | 4. Collaboration | 0/? | Not started | - |
 | 5. Scoring | 0/? | Not started | - |
 
@@ -136,4 +140,6 @@ Plans:
 
 _Created: 2026-04-20_
 _Updated: 2026-04-20 — Phase 1 complete (2/2 plans done: server scaffold + auth endpoints)_
-_Updated: 2026-04-21 — Phase 2 complete (3/3 plans: auth store, auth UI components, app wiring)
+_Updated: 2026-04-21 — Phase 2 complete (3/3 plans: auth store, auth UI components, app wiring)_
+_Updated: 2026-04-21 — Phase 3 planned (4 plans: backend API, store+routing, ProjectsPage, ProjectDetailPage)_
+_Updated: 2026-04-25 — Phase 3 Plan 1 complete (1/4 plans: backend projects router + multer upload)_

@@ -3,9 +3,9 @@
 ## Current Position
 
 Phase: 3 — Admin Project Management
-Plan: —
-Status: Ready to plan
-Last activity: 2026-04-21 — Phase 2 complete (human verification approved, all 4 success criteria met)
+Plan: 1 of 4 complete
+Status: Executing — Phase 3, Wave 1 in progress
+Last activity: 2026-04-25 — Phase 3, Plan 1 complete: Backend Project & Fragment API Routes
 
 ## Progress Bar
 
@@ -26,6 +26,10 @@ Last activity: 2026-04-21 — Phase 2 complete (human verification approved, all
 
 ## Decisions
 
+- owner_id set server-side from req.user.id on project creation — prevents IDOR ownership hijacking (T-03-04)
+- multer diskStorage scoped to server/data/uploads/{projectId}/ with 20MB file size limit
+- db.transaction wraps layout PATCH for atomic batch fragment metadata updates
+- Fragment UPDATE uses WHERE id = ? AND project_id = ? to prevent cross-project tampering
 - Fresh phase numbering starting at 1 for milestone v1.1 (v1.0 treated as Phase 0 / pre-milestone)
 - AUTH-05 (JWT client-side persistence) assigned to Phase 2 — client concern, depends on Phase 1 backend issuing tokens
 - SQLite schema covers: users, projects, fragments, attempts, scores, token_denylist (6 tables)
@@ -55,4 +59,4 @@ Last activity: 2026-04-21 — Phase 2 complete (human verification approved, all
 None.
 
 ---
-_Last updated: 2026-04-21 — Phase 2 complete: 3/3 plans done, human verification approved. Ready for Phase 3 (Admin Project Management)._
+_Last updated: 2026-04-25 — Phase 3, Plan 1 complete: Backend Project & Fragment API Routes (6 REST routes, multer upload, static file serving)._
