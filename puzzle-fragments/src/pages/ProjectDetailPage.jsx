@@ -47,7 +47,7 @@ function toCanvasFragment(serverFrag, index) {
 
 // ─── ProjectCanvas: Fragment canvas reading from props, not useFragmentStore ──
 
-function FragmentNode({ fragment, isSelected, ownSegments, matchSegments, onSelect, onUpdate }) {
+function FragmentNode({ fragment, isSelected, ownSegments, matchSegments, onSelect, onUpdate, readOnly = false }) {
   const [img, setImg] = useState(null)
   const groupRef      = useRef()
 
@@ -77,11 +77,11 @@ function FragmentNode({ fragment, isSelected, ownSegments, matchSegments, onSele
       rotation={fragment.rotation}
       scaleX={fragment.scaleX}
       scaleY={fragment.scaleY}
-      draggable
-      onClick={() => onSelect(fragment.id)}
-      onTap={() => onSelect(fragment.id)}
-      onDragEnd={(e) => onUpdate(fragment.id, { x: e.target.x(), y: e.target.y() })}
-      onTransformEnd={() => {
+      draggable={!readOnly}
+      onClick={readOnly ? undefined : () => onSelect(fragment.id)}
+      onTap={readOnly ? undefined : () => onSelect(fragment.id)}
+      onDragEnd={readOnly ? undefined : (e) => onUpdate(fragment.id, { x: e.target.x(), y: e.target.y() })}
+      onTransformEnd={readOnly ? undefined : () => {
         const node = groupRef.current
         if (!node) return
         onUpdate(fragment.id, {
@@ -118,7 +118,7 @@ function FragmentNode({ fragment, isSelected, ownSegments, matchSegments, onSele
   )
 }
 
-function ProjectCanvas({ fragments, onFragmentUpdate }) {
+function ProjectCanvas({ fragments, onFragmentUpdate, readOnly = false, emptyMessage = 'No fragments.' }) {
   const containerRef = useRef(null)
   const stageRef     = useRef(null)
   const trRef        = useRef(null)
@@ -161,7 +161,7 @@ function ProjectCanvas({ fragments, onFragmentUpdate }) {
     <div ref={containerRef} className="canvas-wrap">
       {fragments.length === 0 && (
         <div className="canvas-empty">
-          <span>Upload fragment photos using the panel on the left</span>
+          <span>{emptyMessage}</span>
         </div>
       )}
       <Stage
@@ -188,19 +188,22 @@ function ProjectCanvas({ fragments, onFragmentUpdate }) {
                 isSelected={isSelected}
                 ownSegments={ownSegments}
                 matchSegments={matchSegs}
-                onSelect={setSelectedId}
+                onSelect={readOnly ? () => {} : setSelectedId}
                 onUpdate={onFragmentUpdate}
+                readOnly={readOnly}
               />
             )
           })}
-          <Transformer
-            ref={trRef}
-            rotateEnabled
-            enabledAnchors={['top-left', 'top-right', 'bottom-left', 'bottom-right']}
-            borderStroke="#e8b84b" borderStrokeWidth={1.5}
-            anchorStroke="#e8b84b" anchorFill="#111111"
-            anchorSize={9} anchorCornerRadius={2} rotateAnchorOffset={20}
-          />
+          {!readOnly && (
+            <Transformer
+              ref={trRef}
+              rotateEnabled
+              enabledAnchors={['top-left', 'top-right', 'bottom-left', 'bottom-right']}
+              borderStroke="#e8b84b" borderStrokeWidth={1.5}
+              anchorStroke="#e8b84b" anchorFill="#111111"
+              anchorSize={9} anchorCornerRadius={2} rotateAnchorOffset={20}
+            />
+          )}
         </Layer>
       </Stage>
     </div>
@@ -215,7 +218,8 @@ export default function ProjectDetailPage() {
   const role      = useRole()
   const logout    = useAuthStore((state) => state.logout)
 
-  const { currentProject, loading, error, fetchProject, saveLayout, closeProject } = useProjectStore()
+  const { currentProject, loading, error, fetchProject, saveLayout, closeProject,
+          fetchUserDraft, saveDraft, publishAttempt } = useProjectStore()
 
   // Local canvas fragment state — hydrated from server, updated on drag/rotate
   const [canvasFragments, setCanvasFragments] = useState([])
@@ -224,16 +228,58 @@ export default function ProjectDetailPage() {
   const [saveMsg, setSaveMsg] = useState(null)
   const [closing, setClosing] = useState(false)
 
+  // Phase 4: user attempt state
+  const [currentAttemptId, setCurrentAttemptId] = useState(null)
+  const [isPublished, setIsPublished]           = useState(false)
+  const [showPublishConfirm, setShowPublishConfirm] = useState(false)
+  const [publishing, setPublishing]             = useState(false)
+
   useEffect(() => {
     fetchProject(Number(id))
   }, [id, fetchProject])
 
-  // Hydrate canvas from server fragments when project loads
+  // Three-way canvas hydration: closed → solution; user+open → draft or reference; admin → unchanged
   useEffect(() => {
     if (!currentProject) return
-    const mapped = currentProject.fragments.map((f, i) => toCanvasFragment(f, i))
-    setCanvasFragments(mapped)
-  }, [currentProject])
+
+    if (currentProject.status === 'closed') {
+      // COLLAB-05: load approved solution layout (read-only)
+      const sol = currentProject.solution
+      if (sol?.layout && Array.isArray(sol.layout) && currentProject.fragments.length) {
+        const mapped = currentProject.fragments.map((f, i) => {
+          const pos = sol.layout.find(l => l.id === f.id)
+          const base = toCanvasFragment(f, i)
+          return pos ? { ...base, ...pos } : base
+        })
+        setCanvasFragments(mapped)
+      } else {
+        setCanvasFragments(currentProject.fragments.map((f, i) => toCanvasFragment(f, i)))
+      }
+      return
+    }
+
+    if (role !== 'admin') {
+      // COLLAB-02/03: fetch user draft; hydrate from draft or reference layout
+      fetchUserDraft(currentProject.id).then((draft) => {
+        if (draft?.layout && Array.isArray(draft.layout)) {
+          const mapped = currentProject.fragments.map((f, i) => {
+            const pos = draft.layout.find(l => l.id === f.id)
+            const base = toCanvasFragment(f, i)
+            return pos ? { ...base, ...pos } : base
+          })
+          setCanvasFragments(mapped)
+          setCurrentAttemptId(draft.id)
+          if (draft.status === 'published' || draft.status === 'approved') setIsPublished(true)
+        } else {
+          setCanvasFragments(currentProject.fragments.map((f, i) => toCanvasFragment(f, i)))
+        }
+      })
+      return
+    }
+
+    // Admin: existing behavior unchanged
+    setCanvasFragments(currentProject.fragments.map((f, i) => toCanvasFragment(f, i)))
+  }, [currentProject, role])
 
   // Called by ProjectCanvas on drag/rotate — update local state only (D-16: no auto-save)
   const handleFragmentUpdate = useCallback((fragmentId, updates) => {
@@ -285,6 +331,46 @@ export default function ProjectDetailPage() {
       alert('Close failed: ' + err.message)
     } finally {
       setClosing(false)
+    }
+  }
+
+  // COLLAB-03: Save Attempt button — upsert draft with current canvas layout
+  async function handleSaveAttempt() {
+    if (!currentProject) return
+    setSaving(true)
+    setSaveMsg(null)
+    try {
+      const layoutToSave = canvasFragments.map((f) => ({
+        id: f.dbId,
+        x: f.x, y: f.y, rotation: f.rotation,
+        scaleX: f.scaleX, scaleY: f.scaleY,
+      }))
+      const attempt = await saveDraft(currentProject.id, layoutToSave)
+      setCurrentAttemptId(attempt.id)
+      setSaveMsg('Attempt saved.')
+      setTimeout(() => setSaveMsg(null), 3000)
+    } catch (err) {
+      setSaveMsg('Save failed: ' + err.message)
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  // COLLAB-04: Publish Attempt — lock draft as published (called after confirm)
+  async function handlePublishAttempt() {
+    if (!currentAttemptId) return
+    setPublishing(true)
+    setSaveMsg(null)
+    setShowPublishConfirm(false)
+    try {
+      await publishAttempt(currentAttemptId)
+      setIsPublished(true)
+      setSaveMsg('Attempt published.')
+      setTimeout(() => setSaveMsg(null), 3000)
+    } catch (err) {
+      setSaveMsg('Publish failed: ' + err.message)
+    } finally {
+      setPublishing(false)
     }
   }
 
@@ -340,78 +426,160 @@ export default function ProjectDetailPage() {
 
       {/* ── Section 1: Canvas + sidebar (D-07, D-14, D-15) ── */}
       <div className="detail-canvas-section">
-        {/* Upload sidebar (D-10) */}
-        <ProjectDropzone
-          projectId={currentProject.id}
-          onFragmentUploaded={handleFragmentUploaded}
-          disabled={isClosed}
-        />
+        {/* Upload sidebar (D-10) — admin only */}
+        {role === 'admin' && (
+          <ProjectDropzone
+            projectId={currentProject.id}
+            onFragmentUploaded={handleFragmentUploaded}
+            disabled={isClosed}
+          />
+        )}
 
         {/* Canvas area */}
         <div className="detail-canvas-area">
-          {/* Canvas header with Save Layout + Close Project */}
+          {/* Canvas header with Save Layout + Close Project (admin) / Save Attempt + Publish Attempt (user) */}
           <div className="canvas-toolbar">
             <span className="canvas-toolbar-title">
               Fragment Canvas &nbsp;·&nbsp; {canvasFragments.length} fragment{canvasFragments.length !== 1 ? 's' : ''}
             </span>
             <div className="canvas-toolbar-actions">
-              {saveMsg && <span className="save-msg">{saveMsg}</span>}
-              {/* D-16: explicit Save Layout (admin only) */}
+              {/* Admin save/close controls */}
               {role === 'admin' && (
-                <button
-                  className="btn-save-layout"
-                  onClick={handleSaveLayout}
-                  disabled={saving || isClosed}
-                  type="button"
-                >
-                  {saving ? 'Saving…' : 'Save Layout'}
-                </button>
+                <>
+                  {saveMsg && <span className="save-msg">{saveMsg}</span>}
+                  {/* D-16: explicit Save Layout (admin only) */}
+                  <button
+                    className="btn-save-layout"
+                    onClick={handleSaveLayout}
+                    disabled={saving || isClosed}
+                    type="button"
+                  >
+                    {saving ? 'Saving…' : 'Save Layout'}
+                  </button>
+                  {/* D-09: Close Project (admin only) */}
+                  {!isClosed && (
+                    <button
+                      className="btn-close-project"
+                      onClick={handleClose}
+                      disabled={closing}
+                      type="button"
+                    >
+                      {closing ? 'Closing…' : 'Close Project'}
+                    </button>
+                  )}
+                </>
               )}
-              {/* D-09: Close Project (admin only) */}
-              {role === 'admin' && !isClosed && (
-                <button
-                  className="btn-close-project"
-                  onClick={handleClose}
-                  disabled={closing}
-                  type="button"
-                >
-                  {closing ? 'Closing…' : 'Close Project'}
-                </button>
+              {/* COLLAB-03/04: User attempt toolbar — save and publish (user, open projects only) */}
+              {role !== 'admin' && !isClosed && (
+                <>
+                  {saveMsg && (
+                    <span className={`save-msg${saveMsg.startsWith('Save failed') || saveMsg.startsWith('Publish failed') ? ' save-msg--error' : ''}`}>
+                      {saveMsg}
+                    </span>
+                  )}
+                  <button
+                    className="btn-save-attempt"
+                    onClick={handleSaveAttempt}
+                    disabled={saving}
+                    type="button"
+                  >
+                    {saving ? 'Saving…' : 'Save Attempt'}
+                  </button>
+                  {!isPublished && (
+                    <button
+                      className="btn-publish-attempt"
+                      onClick={() => setShowPublishConfirm(true)}
+                      disabled={publishing}
+                      type="button"
+                    >
+                      {publishing ? 'Publishing…' : 'Publish Attempt'}
+                    </button>
+                  )}
+                </>
+              )}
+              {/* COLLAB-05: Read-only label for closed project canvas (non-admin) */}
+              {isClosed && role !== 'admin' && (
+                <span className="canvas-toolbar-readonly">READ-ONLY · Approved Solution</span>
               )}
             </div>
           </div>
 
-          {/* Canvas (D-15: full drag/rotate interaction) */}
+          {/* Canvas (D-15: full drag/rotate interaction for open projects) */}
           <ProjectCanvas
             fragments={canvasFragments}
             onFragmentUpdate={handleFragmentUpdate}
+            readOnly={isClosed}
+            emptyMessage={
+              isClosed
+                ? 'No fragments in this project.'
+                : role === 'admin'
+                  ? 'Upload fragment photos using the panel on the left'
+                  : "No fragments loaded. The archaeologist hasn't uploaded any yet."
+            }
           />
+
+          {/* COLLAB-05: D-17 Solver attribution */}
+          {isClosed && currentProject.solution && (
+            <div className="canvas-solver">
+              SOLVED BY: <span className="canvas-solver-email">{currentProject.solution.submitter_email}</span>
+            </div>
+          )}
         </div>
       </div>
 
-      {/* ── Section 2: Submitted Attempts (D-07, D-08) ── */}
-      <div className="detail-attempts-section">
-        <h2 className="attempts-title">Submitted Attempts</h2>
-        {currentProject.attempts.length === 0 ? (
-          <p className="attempts-empty">No attempts submitted yet.</p>
-        ) : (
-          <table className="attempts-table">
-            <thead>
-              <tr>
-                <th>Submitter</th>
-                <th>Status</th>
-                <th>Submitted</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {currentProject.attempts.map((attempt) => (
-                <AttemptRow key={attempt.id} attempt={attempt} />
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
+      {/* ── Section 2: Submitted Attempts (D-07, D-08) — admin only ── */}
+      {role === 'admin' && (
+        <div className="detail-attempts-section">
+          <h2 className="attempts-title">Submitted Attempts</h2>
+          {currentProject.attempts.length === 0 ? (
+            <p className="attempts-empty">No attempts submitted yet.</p>
+          ) : (
+            <table className="attempts-table">
+              <thead>
+                <tr>
+                  <th>Submitter</th>
+                  <th>Status</th>
+                  <th>Submitted</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {currentProject.attempts.map((attempt) => (
+                  <AttemptRow key={attempt.id} attempt={attempt} />
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
+      )}
+
+      {/* COLLAB-04: Publish confirmation modal */}
+      {showPublishConfirm && (
+        <div className="attempt-modal-backdrop" onClick={() => setShowPublishConfirm(false)}>
+          <div className="attempt-modal" onClick={(e) => e.stopPropagation()}>
+            <h3>Publish attempt?</h3>
+            <p className="publish-confirm-body">
+              Once published, your arrangement is locked and cannot be edited.
+            </p>
+            <div className="attempt-modal-actions">
+              <button
+                className="btn-publish-confirm"
+                onClick={handlePublishAttempt}
+                type="button"
+              >
+                Publish now
+              </button>
+              <button
+                className="btn-modal-close"
+                onClick={() => setShowPublishConfirm(false)}
+                type="button"
+              >
+                Keep editing
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
