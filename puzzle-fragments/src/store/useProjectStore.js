@@ -10,7 +10,7 @@ function authHeaders() {
   }
 }
 
-const useProjectStore = create((set, get) => ({
+const useProjectStore = create((set) => ({
   // ── State ──────────────────────────────────────────────────────────────────
   projects: [],          // ProjectRow[] (list view)
   currentProject: null,  // ProjectRow & { fragments: FragmentRow[], attempts: AttemptRow[] }
@@ -130,6 +130,48 @@ const useProjectStore = create((set, get) => ({
         : state.currentProject,
     }))
     return updated
+  },
+
+  /** GET /api/projects/:id/attempts/me — fetch current user's draft (returns null if none) */
+  async fetchUserDraft(projectId) {
+    try {
+      const res = await fetch(`${API}/api/projects/${projectId}/attempts/me`, {
+        headers: authHeaders(),
+      })
+      if (res.status === 404) return null   // no draft yet — not an error
+      if (!res.ok) throw new Error(`HTTP ${res.status}`)
+      return await res.json()
+    } catch (err) {
+      console.error('[fetchUserDraft]', err)
+      return null
+    }
+  },
+
+  /** POST /api/projects/:id/attempts — upsert draft layout */
+  async saveDraft(projectId, layout) {
+    const res = await fetch(`${API}/api/projects/${projectId}/attempts`, {
+      method: 'POST',
+      headers: { ...authHeaders(), 'Content-Type': 'application/json' },
+      body: JSON.stringify({ layout }),
+    })
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}))
+      throw new Error(body.error || `HTTP ${res.status}`)
+    }
+    return await res.json()
+  },
+
+  /** POST /api/attempts/:id/publish — lock attempt as published */
+  async publishAttempt(attemptId) {
+    const res = await fetch(`${API}/api/attempts/${attemptId}/publish`, {
+      method: 'POST',
+      headers: authHeaders(),
+    })
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}))
+      throw new Error(body.error || `HTTP ${res.status}`)
+    }
+    return await res.json()
   },
 
   /** Update a single fragment's canvas position in currentProject state (local, not persisted) */
