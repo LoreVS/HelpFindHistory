@@ -33,6 +33,7 @@ app.get('/api/health', (_req, res) => {
 
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/projects', require('./routes/projects'));
+app.use('/api', require('./routes/attempts'));
 
 // Serve uploaded fragment images
 app.use('/uploads', express.static(require('path').join(__dirname, 'data/uploads')));
