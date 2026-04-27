@@ -294,3 +294,106 @@
 }
 
 .detail-error { color: #e05c5c; }
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   Phase 4: Collaboration UI additions
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+/* ── User Attempt Toolbar Buttons ─────────────────────────────────────────── */
+
+/* Matches .btn-save-layout — amber outline, fills on hover */
+.btn-save-attempt {
+  background: transparent;
+  border: 1px solid #e8b84b;
+  color: #e8b84b;
+  padding: 4px 16px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.btn-save-attempt:hover:not(:disabled) { background: #e8b84b; color: #111; }
+.btn-save-attempt:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* Identical token values to .btn-save-attempt — distinguished by label only */
+.btn-publish-attempt {
+  background: transparent;
+  border: 1px solid #e8b84b;
+  color: #e8b84b;
+  padding: 4px 16px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.btn-publish-attempt:hover:not(:disabled) { background: #e8b84b; color: #111; }
+.btn-publish-attempt:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* ── Publish Confirmation Dialog ──────────────────────────────────────────── */
+
+/* Solid amber fill — permanent action (not data-destructive) */
+.btn-publish-confirm {
+  background: #e8b84b;
+  color: #111111;
+  border: none;
+  padding: 8px 16px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.btn-publish-confirm:hover { opacity: 0.88; }
+
+/* Override italic from .attempt-modal-placeholder for publish confirm body copy */
+.publish-confirm-body {
+  color: #d4c5a9;
+  font-size: 0.83rem;
+  font-style: normal;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* ── Error Feedback Modifier ──────────────────────────────────────────────── */
+
+.save-msg--error {
+  color: #e05c5c;
+}
+
+/* ── Draft Attempt Status Badge ───────────────────────────────────────────── */
+
+.attempt-status--draft {
+  background: #1a1a2a;
+  color: #888;
+  border: 1px solid #2a2a4a;
+}
+
+/* ── Read-Only Canvas Toolbar Label ──────────────────────────────────────── */
+
+.canvas-toolbar-readonly {
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  color: #555;
+  text-transform: uppercase;
+  font-style: normal;
+}
+
+/* ── Solver Attribution (Closed Project) ─────────────────────────────────── */
+
+.canvas-solver {
+  padding: 8px 16px;
+  font-size: 0.78rem;
+  color: #888;
+  letter-spacing: 0.06em;
+  border-top: 1px solid #222;
+  background: #141414;
+  flex-shrink: 0;
+}
+
+.canvas-solver-email {
+  color: #d4c5a9;
+  font-weight: 400;
+}
