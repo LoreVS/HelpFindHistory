@@ -10,9 +10,6 @@ const { requireAuth, requireRole } = require('../middleware/auth')
 
 const router = express.Router()
 
-// All routes require auth + admin role (D-19)
-router.use(requireAuth, requireRole('admin'))
-
 // ── Storage engine: disk, per-project subdirectory (D-12) ────────────────────
 const storage = multer.diskStorage({
   destination(req, _file, cb) {
@@ -29,7 +26,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage, limits: { fileSize: 20 * 1024 * 1024 } })
 
 // ── POST /api/projects — create project (D-18, PROJ-01) ─────────────────────
-router.post('/', (req, res) => {
+router.post('/', requireAuth, requireRole('admin'), (req, res) => {
   const { name, description = '' } = req.body
   if (!name || typeof name !== 'string' || !name.trim()) {
     return res.status(400).json({ error: 'Project name is required.' })
@@ -42,20 +39,23 @@ router.post('/', (req, res) => {
   return res.status(201).json(project)
 })
 
-// ── GET /api/projects — list all projects with fragment count (D-18, PROJ-04) ─
-router.get('/', (_req, res) => {
+// ── GET /api/projects — list projects (role-filtered: admin sees all, users see open only)
+// COLLAB-01, T-04-04: role-based SQL filter
+router.get('/', requireAuth, (req, res) => {
+  const isAdmin = req.user.role === 'admin'
   const projects = db.prepare(`
     SELECT p.*, COUNT(f.id) AS fragment_count
     FROM projects p
     LEFT JOIN fragments f ON f.project_id = p.id
+    ${isAdmin ? '' : "WHERE p.status = 'open'"}
     GROUP BY p.id
     ORDER BY p.created_at DESC
   `).all()
   return res.json(projects)
 })
 
-// ── GET /api/projects/:id — project + its fragments (D-18, PROJ-04) ─────────
-router.get('/:id', (req, res) => {
+// ── GET /api/projects/:id — project + its fragments (D-18, PROJ-04, COLLAB-05) ─
+router.get('/:id', requireAuth, (req, res) => {
   const project = db.prepare('SELECT * FROM projects WHERE id = ?').get(req.params.id)
   if (!project) return res.status(404).json({ error: 'Project not found.' })
 
@@ -78,11 +78,27 @@ router.get('/:id', (req, res) => {
     ORDER BY a.submitted_at DESC
   `).all(req.params.id)
 
-  return res.json({ ...project, fragments: fragsWithMeta, attempts })
+  // Inject solution for closed projects (D-16, D-17, COLLAB-05)
+  let solution = null
+  if (project.status === 'closed') {
+    solution = db.prepare(`
+      SELECT a.layout, u.email AS submitter_email
+      FROM attempts a
+      JOIN users u ON u.id = a.user_id
+      WHERE a.project_id = ? AND a.status = 'approved'
+      ORDER BY a.reviewed_at DESC
+      LIMIT 1
+    `).get(req.params.id)
+    if (solution) {
+      try { solution = { ...solution, layout: JSON.parse(solution.layout) } } catch { /* leave as string */ }
+    }
+  }
+
+  return res.json({ ...project, fragments: fragsWithMeta, attempts, solution })
 })
 
 // ── POST /api/projects/:id/fragments — upload fragment (D-18, PROJ-02) ──────
-router.post('/:id/fragments', upload.single('file'), (req, res) => {
+router.post('/:id/fragments', requireAuth, requireRole('admin'), upload.single('file'), (req, res) => {
   const project = db.prepare('SELECT id, status FROM projects WHERE id = ?').get(req.params.id)
   if (!project) return res.status(404).json({ error: 'Project not found.' })
   if (project.status === 'closed') {
@@ -108,7 +124,7 @@ router.post('/:id/fragments', upload.single('file'), (req, res) => {
 })
 
 // ── PATCH /api/projects/:id/layout — save fragment positions (D-18, PROJ-03) ─
-router.patch('/:id/layout', (req, res) => {
+router.patch('/:id/layout', requireAuth, requireRole('admin'), (req, res) => {
   const project = db.prepare('SELECT id, status FROM projects WHERE id = ?').get(req.params.id)
   if (!project) return res.status(404).json({ error: 'Project not found.' })
   if (project.status === 'closed') {
@@ -136,7 +152,7 @@ router.patch('/:id/layout', (req, res) => {
 })
 
 // ── POST /api/projects/:id/close — close project (D-18, D-09, PROJ-05) ─────
-router.post('/:id/close', (req, res) => {
+router.post('/:id/close', requireAuth, requireRole('admin'), (req, res) => {
   const project = db.prepare('SELECT id, status FROM projects WHERE id = ?').get(req.params.id)
   if (!project) return res.status(404).json({ error: 'Project not found.' })
   if (project.status === 'closed') {
