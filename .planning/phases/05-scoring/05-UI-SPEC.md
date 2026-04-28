@@ -1,10 +1,11 @@
 ---
 phase: 5
 slug: scoring
-status: draft
+status: approved
 shadcn_initialized: false
 preset: none
 created: 2026-04-29
+reviewed_at: 2026-04-29
 ---
 
 # Phase 5 — UI Design Contract
@@ -34,6 +35,12 @@ Source: existing codebase — `App.css`, `ProjectsPage.css`, `ProjectDetailPage.
 
 ---
 
+## Visuals
+
+Primary visual anchor is the read-only canvas preview; attempt metadata header is secondary; approve/reject action row is tertiary.
+
+---
+
 ## Spacing Scale
 
 Inherited from Phase 4 (no new values introduced). Relevant tokens for Phase 5 elements:
@@ -59,8 +66,8 @@ All Phase 5 new elements use the same four tiers established in Phase 4. No new 
 |------|------|--------|-------------|-----------------|
 | Label / badge | 0.78rem (~12.5px) | 400 | — | Score chip text, form label "Reward (pts)" |
 | Secondary body | 0.83rem (~13.3px) | 400 | 1.5 | Confirm modal body copy |
-| Primary body | 0.9rem (~14.4px) | 400 | 1.5 | Confirm modal h3 |
-| Header badge | 14px | 500 | 1 | Score chip (JetBrains Mono, matches admin-badge) |
+| Primary body | 0.9rem (~14.4px) | 700 | 1.5 | Confirm modal h3 |
+| Header badge | 14px | 400 | 1 | Score chip (JetBrains Mono, matches admin-badge) |
 
 Confirm Approve button: 0.78rem, weight 700, letter-spacing 0.06em (matches `.btn-publish-confirm` pattern).
 
@@ -81,6 +88,7 @@ All tokens inherited. Phase 5 introduces one new usage context for the green sem
 | Accent (amber) | `#e8b84b` | NOT used for score chip (reserved for admin/action elements) |
 | Approve semantic (bg/text/border) | `#1a3a1a` / `#5ccc5c` / `#2d6b2d` | Confirm Approve button fill; score chip positive variant |
 | Destructive | `#cc4444` | NOT used in Phase 5 (reject is non-destructive, no confirm needed) |
+| Reject text | `#cc5555` | Reject button text (pre-existing, `.btn-reject`) |
 
 **Score chip color decision (Claude's discretion, D-11):**
 Use the neutral variant: background `#161616`, color `#888`, border `#2a2a2a`. Rationale: the green semantic cluster is already occupied by approved/open-project status signals. A neutral chip avoids false positive connotation (a score of 0 should not look "approved"). The star glyph alone conveys earned status.
@@ -248,8 +256,8 @@ Added to `App.css` alongside `.admin-badge` (same file, same section).
   border-radius: 4px;
   padding: 4px 8px;
   font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  font-weight: 500;
+  font-size: 14px;
+  font-weight: 400;
   color: #888;
   letter-spacing: 0.06em;
   line-height: 1;
@@ -295,16 +303,16 @@ All copy follows the terse industrial register. Sentence fragments. No em dashes
 | Reward form validation error | `Reward must be at least 1.` |
 | Review modal — attempt heading | `Attempt by {submitter_email}` |
 | Review modal — canvas loading | `Loading canvas…` |
-| Review modal — canvas error | `Canvas failed to load.` |
-| Approve btn (review modal, idle) | `Approve` |
+| Review modal — canvas error | `Canvas failed to load. Close and reopen the attempt.` |
+| Approve btn (review modal, idle) | `Approve Attempt` |
 | Approve btn (review modal, in-progress) | `Approving…` |
-| Reject btn (review modal, idle) | `Reject` |
+| Reject btn (review modal, idle) | `Reject Attempt` |
 | Reject btn (review modal, in-progress) | `Rejecting…` |
 | Approve confirm modal — title | `Approve this attempt?` |
 | Approve confirm modal — body | `This will close the project and award {N} pts to {submitter_email}.` |
 | Confirm Approve btn (idle) | `Confirm Approve` |
 | Confirm Approve btn (in-progress) | `Approving…` |
-| Cancel btn (confirm modal) | `Cancel` |
+| Cancel btn (confirm modal) | `Keep reviewing` |
 | Score chip | `★ {N}` (star + space + integer) |
 | Score chip — loading state | `★ …` (ellipsis while fetching) |
 | Reject feedback (status badge only) | (no toast — existing `attempt-status--rejected` badge is sufficient per D-10) |
