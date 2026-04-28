@@ -238,3 +238,46 @@
   color: #e8b84b;
   font-weight: 600;
 }
+
+/* ── My Finished Projects section ─────────────────────────────────────── */
+.finished-section {
+  margin-top: 2.5rem;
+}
+
+.finished-title {
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted, #888);
+  margin-bottom: 1rem;
+  padding: 0 28px;
+}
+
+/* Attempt status pill on finished project cards */
+.attempt-pill {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 3px;
+}
+
+.attempt-pill--published {
+  background: rgba(232, 184, 75, 0.15);
+  color: #e8b84b;
+  border: 1px solid rgba(232, 184, 75, 0.35);
+}
+
+.attempt-pill--approved {
+  background: rgba(80, 200, 120, 0.15);
+  color: #50c878;
+  border: 1px solid rgba(80, 200, 120, 0.35);
+}
+
+.attempt-pill--rejected {
+  background: rgba(200, 80, 80, 0.15);
+  color: #c85050;
+  border: 1px solid rgba(200, 80, 80, 0.35);
+}

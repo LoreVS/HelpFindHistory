@@ -10,7 +10,7 @@ export default function ProjectsPage() {
   const role      = useRole()
   const logout    = useAuthStore((state) => state.logout)
 
-  const { projects, loading, error, fetchProjects, createProject } = useProjectStore()
+  const { projects, loading, error, fetchProjects, createProject, myAttempts, fetchMyAttempts } = useProjectStore()
 
   // New Project form state
   const [showForm, setShowForm]       = useState(false)
@@ -21,7 +21,13 @@ export default function ProjectsPage() {
 
   useEffect(() => {
     fetchProjects()
-  }, [fetchProjects])
+    if (role !== 'admin') fetchMyAttempts()
+  }, [fetchProjects, fetchMyAttempts, role])
+
+  function attemptStatusLabel(status) {
+    if (status === 'published') return 'on review'
+    return status  // 'approved' | 'rejected' pass through as-is
+  }
 
   async function handleCreate(e) {
     e.preventDefault()
@@ -151,6 +157,40 @@ export default function ProjectsPage() {
           </div>
         ))}
       </div>
+
+      {/* ── My Finished Projects (COLLAB-04/06: non-admin users with submitted attempts) ── */}
+      {role !== 'admin' && myAttempts.length > 0 && (
+        <section className="finished-section">
+          <h2 className="finished-title">My Finished Projects</h2>
+          <div className="projects-grid finished-grid">
+            {myAttempts.map((attempt) => (
+              <div
+                key={attempt.id}
+                className="project-card"
+                onClick={() => navigate(`/projects/${attempt.project_id}`)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => e.key === 'Enter' && navigate(`/projects/${attempt.project_id}`)}
+              >
+                <div className="card-header">
+                  <h3 className="card-name">{attempt.project_name}</h3>
+                  <span className={`card-status card-status--${attempt.project_status}`}>
+                    {attempt.project_status}
+                  </span>
+                </div>
+                <div className="card-footer">
+                  <span className={`attempt-pill attempt-pill--${attempt.status}`}>
+                    {attemptStatusLabel(attempt.status)}
+                  </span>
+                  <span className="card-date">
+                    {attempt.submitted_at ? new Date(attempt.submitted_at).toLocaleDateString() : '—'}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
     </div>
   )
 }

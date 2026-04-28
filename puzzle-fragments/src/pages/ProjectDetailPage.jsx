@@ -395,8 +395,7 @@ export default function ProjectDetailPage() {
     try {
       await publishAttempt(currentAttemptId)
       setIsPublished(true)
-      setSaveMsg('Attempt published.')
-      setTimeout(() => setSaveMsg(null), 3000)
+      navigate('/projects')
     } catch (err) {
       setSaveMsg('Publish failed: ' + err.message)
     } finally {
