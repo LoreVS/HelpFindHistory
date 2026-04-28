@@ -2,10 +2,10 @@
 
 ## Current Position
 
-Phase: 3 — Admin Project Management
-Plan: 3 of 4 complete
-Status: Executing — Phase 3, Wave 3 in progress
-Last activity: 2026-04-25 — Phase 3, Plan 3 complete: ProjectsPage UI
+Phase: 4 — Collaboration
+Plan: 0 of 3 complete
+Status: Ready to execute
+Last activity: 2026-04-27 — Phase 4 planned (3 plans: backend routes, store extension, frontend UI)
 
 ## Progress Bar
 
@@ -61,10 +61,22 @@ Last activity: 2026-04-25 — Phase 3, Plan 3 complete: ProjectsPage UI
 - Inline toggle form (showForm state) for New Project rather than modal or separate route
 - Description truncated at 120 chars in card grid for uniform card height
 - .card-status--open (green) and .card-status--closed (muted) for visually distinct project status badges
+- ProjectCanvas defined inline in ProjectDetailPage (not modifying FragmentCanvas.jsx) — backwards compat for /canvas route (D-03)
+- Local canvasFragments state initialized from server data; explicit Save Layout is only write path (D-16)
+- Blob URL fetched via fetch() inside ProjectDropzone before upload — useBackgroundRemoval returns blob URL not raw blob
+- isClosed disables ProjectDropzone and Save Layout button — closed projects fully read-only in UI (D-09, T-03-14)
+- AttemptRow modal stubs Approve/Reject with console.log — wired in Phase 5 (D-08)
+- toCanvasFragment stores dbId (numeric) + id (string) to disambiguate Konva IDs from DB IDs
 
 ## Blockers
 
 None.
 
+### Quick Tasks Completed
+
+| # | Description | Date | Commit | Directory |
+|---|-------------|------|--------|-----------|
+| 260428-n51 | Fix canvas aspect ratio and prevent duplicate publish | 2026-04-28 | 69e070d | [260428-n51-fix-canvas-aspect-ratio-and-prevent-duplicate-publish](.planning/quick/260428-n51-fix-canvas-aspect-ratio-and-prevent-duplicate-publish/) |
+
 ---
-_Last updated: 2026-04-25 — Phase 3, Plan 3 complete: ProjectsPage UI (card grid, New Project form, status badges)._
+_Last updated: 2026-04-28 - Completed quick task 260428-n51: Fix canvas aspect ratio and prevent duplicate publish_
