@@ -21,6 +21,22 @@ router.get('/projects/:id/attempts/me', (req, res) => {
   })
 })
 
+// ── GET /api/attempts/me — fetch current user's finished attempts with project info ──
+// T-27u-01: requireAuth applied at router level; WHERE a.user_id = req.user.id ensures
+// only the authenticated user's own rows are returned (no IDOR possible)
+router.get('/attempts/me', (req, res) => {
+  const rows = db.prepare(`
+    SELECT a.id, a.project_id, a.status, a.submitted_at,
+           p.name AS project_name, p.status AS project_status
+    FROM attempts a
+    JOIN projects p ON p.id = a.project_id
+    WHERE a.user_id = ?
+      AND a.status IN ('published', 'approved', 'rejected')
+    ORDER BY a.submitted_at DESC
+  `).all(req.user.id)
+  return res.json(rows)
+})
+
 // ── POST /api/projects/:id/attempts — upsert draft layout ────────────────────
 // T-04-03: scoped by project_id AND user_id to prevent cross-project injection
 router.post('/projects/:id/attempts', (req, res) => {

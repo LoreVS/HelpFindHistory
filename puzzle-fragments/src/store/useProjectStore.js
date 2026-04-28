@@ -14,6 +14,7 @@ const useProjectStore = create((set) => ({
   // ── State ──────────────────────────────────────────────────────────────────
   projects: [],          // ProjectRow[] (list view)
   currentProject: null,  // ProjectRow & { fragments: FragmentRow[], attempts: AttemptRow[] }
+  myAttempts: [],        // finished attempts (published/approved/rejected) for current user
   loading: false,
   error: null,
 
@@ -29,6 +30,19 @@ const useProjectStore = create((set) => ({
       set({ projects, loading: false })
     } catch (err) {
       set({ error: err.message, loading: false })
+    }
+  },
+
+  /** GET /api/attempts/me — load current user's finished attempts with project info */
+  async fetchMyAttempts() {
+    try {
+      const res = await fetch(`${API}/api/attempts/me`, { headers: authHeaders() })
+      if (!res.ok) throw new Error(`HTTP ${res.status}`)
+      const data = await res.json()
+      set({ myAttempts: data })
+    } catch (err) {
+      console.error('[fetchMyAttempts]', err)
+      set({ myAttempts: [] })
     }
   },
 
