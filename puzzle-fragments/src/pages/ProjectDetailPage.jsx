@@ -55,15 +55,38 @@ function FragmentNode({ fragment, isSelected, ownSegments, matchSegments, onSele
     if (!fragment.src) return
     const image = new window.Image()
     image.crossOrigin = 'anonymous'
-    image.onload  = () => setImg(image)
+    image.onload = () => {
+      setImg(image)
+      // Correct display dimensions from actual image to preserve aspect ratio
+      const MAX = 320
+      const scale = Math.min(MAX / image.naturalWidth, MAX / image.naturalHeight, 1)
+      const w = Math.round(image.naturalWidth * scale)
+      const h = Math.round(image.naturalHeight * scale)
+      if (w !== fragment.width || h !== fragment.height) {
+        onUpdate(fragment.id, {
+          width: w, height: h,
+          originalWidth: image.naturalWidth,
+          originalHeight: image.naturalHeight,
+        })
+      }
+    }
     image.onerror = () => console.error('[ProjectCanvas] Failed to load:', fragment.src)
     image.src = fragment.src
-  }, [fragment.src])
+  }, [fragment.src]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  const sx = fragment.originalWidth  ? fragment.width  / fragment.originalWidth  : 1
-  const sy = fragment.originalHeight ? fragment.height / fragment.originalHeight : 1
-  const ox = fragment.width  / 2
-  const oy = fragment.height / 2
+  // Derive display dimensions from loaded image to preserve aspect ratio before state syncs
+  const MAX_DISPLAY = 320
+  const displayW = img
+    ? Math.round(img.naturalWidth  * Math.min(MAX_DISPLAY / img.naturalWidth,  MAX_DISPLAY / img.naturalHeight, 1))
+    : fragment.width
+  const displayH = img
+    ? Math.round(img.naturalHeight * Math.min(MAX_DISPLAY / img.naturalWidth,  MAX_DISPLAY / img.naturalHeight, 1))
+    : fragment.height
+
+  const sx = fragment.originalWidth  ? displayW / fragment.originalWidth  : 1
+  const sy = fragment.originalHeight ? displayH / fragment.originalHeight : 1
+  const ox = displayW / 2
+  const oy = displayH / 2
 
   const toLocal = (points) => points.flatMap(p => [p.x * sx - ox, p.y * sy - oy])
   const activeSegments = isSelected ? ownSegments : matchSegments
@@ -95,7 +118,7 @@ function FragmentNode({ fragment, isSelected, ownSegments, matchSegments, onSele
         <KonvaImage
           image={img}
           x={-ox} y={-oy}
-          width={fragment.width} height={fragment.height}
+          width={displayW} height={displayH}
           opacity={isSelected ? 0.82 : 1}
         />
       )}
@@ -291,8 +314,15 @@ export default function ProjectDetailPage() {
   // Called by ProjectDropzone after successful server upload (D-10, D-12)
   const handleFragmentUploaded = useCallback((serverFragment, localData) => {
     const newFrag = toCanvasFragment(serverFragment, canvasFragments.length)
-    // Override src with the local blob URL for immediate display (avoids server round-trip)
-    setCanvasFragments((prev) => [...prev, { ...newFrag, src: localData.src }])
+    // Use local blob URL and actual dimensions from the processed image
+    setCanvasFragments((prev) => [...prev, {
+      ...newFrag,
+      src: localData.src,
+      originalWidth:  localData.originalWidth,
+      originalHeight: localData.originalHeight,
+      width:  localData.width,
+      height: localData.height,
+    }])
   }, [canvasFragments.length])
 
   // D-16: explicit Save Layout button
@@ -480,7 +510,7 @@ export default function ProjectDetailPage() {
                   <button
                     className="btn-save-attempt"
                     onClick={handleSaveAttempt}
-                    disabled={saving}
+                    disabled={saving || isPublished}
                     type="button"
                   >
                     {saving ? 'Saving…' : 'Save Attempt'}

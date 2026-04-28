@@ -9,15 +9,15 @@ const router = express.Router()
 // All attempt routes require authentication — no admin role needed
 router.use(requireAuth)
 
-// ── GET /api/projects/:id/attempts/me — fetch current user's draft ────────────
+// ── GET /api/projects/:id/attempts/me — fetch current user's attempt (any status) ──
 router.get('/projects/:id/attempts/me', (req, res) => {
   const attempt = db.prepare(
-    "SELECT * FROM attempts WHERE project_id = ? AND user_id = ? AND status = 'draft'"
+    'SELECT * FROM attempts WHERE project_id = ? AND user_id = ? ORDER BY id DESC LIMIT 1'
   ).get(Number(req.params.id), req.user.id)
-  if (!attempt) return res.status(404).json({ error: 'No draft found.' })
+  if (!attempt) return res.status(404).json({ error: 'No attempt found.' })
   return res.json({
     ...attempt,
-    layout: (() => { try { return JSON.parse(attempt.layout) } catch { return {} } })(),
+    layout: (() => { try { return JSON.parse(attempt.layout) } catch { return [] } })(),
   })
 })
 
@@ -40,6 +40,12 @@ router.post('/projects/:id/attempts', (req, res) => {
   }
 
   const upsert = db.transaction(() => {
+    // Block new drafts if user already has a published/approved attempt
+    const locked = db.prepare(
+      "SELECT id FROM attempts WHERE project_id = ? AND user_id = ? AND status IN ('published', 'approved')"
+    ).get(projectId, userId)
+    if (locked) return null
+
     const existing = db.prepare(
       "SELECT id FROM attempts WHERE project_id = ? AND user_id = ? AND status = 'draft'"
     ).get(projectId, userId)
@@ -57,6 +63,7 @@ router.post('/projects/:id/attempts', (req, res) => {
   })
 
   const attempt = upsert()
+  if (!attempt) return res.status(409).json({ error: 'You have already published an attempt for this project.' })
   return res.json(attempt)
 })
 
