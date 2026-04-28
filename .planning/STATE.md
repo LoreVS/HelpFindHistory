@@ -78,6 +78,7 @@ None.
 |---|-------------|------|--------|-----------|
 | 260428-n51 | Fix canvas aspect ratio and prevent duplicate publish | 2026-04-28 | 69e070d | [260428-n51-fix-canvas-aspect-ratio-and-prevent-duplicate-publish](.planning/quick/260428-n51-fix-canvas-aspect-ratio-and-prevent-duplicate-publish/) |
 | 260429-27u | Post-publish redirect and My Finished Projects section | 2026-04-28 | 5b08495 | [260429-27u-post-publish-redirect-and-my-finished-projects-section](.planning/quick/260429-27u-post-publish-redirect-and-my-finished-projects-section/) |
+| 260429-2ey | Clear data script and filter submitted projects from main list | 2026-04-29 | ebc160f | [260429-2ey-clear-data-script-and-filter-submitted-projects](.planning/quick/260429-2ey-clear-data-script-and-filter-submitted-projects/) |
 
 ---
-_Last updated: 2026-04-28 - Completed quick task 260429-27u: Post-publish redirect and My Finished Projects section_
+_Last updated: 2026-04-29 - Completed quick task 260429-2ey: Clear data script + filter submitted projects from main list_
