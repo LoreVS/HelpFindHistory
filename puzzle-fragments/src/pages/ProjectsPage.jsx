@@ -12,6 +12,9 @@ export default function ProjectsPage() {
 
   const { projects, loading, error, fetchProjects, createProject, myAttempts, fetchMyAttempts } = useProjectStore()
 
+  const finishedProjectIds = new Set(myAttempts.map((a) => a.project_id))
+  const visibleProjects = projects.filter((p) => !finishedProjectIds.has(p.id))
+
   // New Project form state
   const [showForm, setShowForm]       = useState(false)
   const [newName, setNewName]         = useState('')
@@ -118,12 +121,12 @@ export default function ProjectsPage() {
       {error && <p className="projects-error">{error}</p>}
 
       {/* ── Card grid (D-04, D-06) ── */}
-      {!loading && projects.length === 0 && (
+      {!loading && visibleProjects.length === 0 && (
         <p className="projects-empty">No projects yet. Create one above.</p>
       )}
 
       <div className="projects-grid">
-        {projects.map((project) => (
+        {visibleProjects.map((project) => (
           <div
             key={project.id}
             className="project-card"
