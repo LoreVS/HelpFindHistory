@@ -77,8 +77,11 @@ Plans:
   3. A user can save their in-progress arrangement and return later to find it preserved
   4. A user can publish their completed arrangement as a formal attempt, making it visible to the admin
   5. A closed project is viewable in read-only mode showing the approved solution layout and the name of the solver
-**Plans**: TBD
-**UI hint**: yes
+**Plans:** 3 plans
+Plans:
+- [ ] 04-01-PLAN.md — Backend: refactor projects.js guards, open GET routes, inject solution field; new attempts.js router (draft upsert, publish)
+- [ ] 04-02-PLAN.md — Frontend store: add fetchUserDraft, saveDraft, publishAttempt to useProjectStore
+- [ ] 04-03-PLAN.md — Frontend UI: ProjectDetailPage user toolbar, three-way canvas hydration, read-only canvas, publish modal, solver attribution; 9 new CSS classes
 
 ### Phase 5: Scoring
 **Goal**: Admins can review, approve, or reject published attempts; approved attempts auto-close the project and award a point to the solver; users can see their total score.
@@ -101,7 +104,7 @@ Plans:
 | 1. Backend Foundation | 2/2 | Complete | 2026-04-20 |
 | 2. Frontend Auth | 3/3 | Complete | 2026-04-21 |
 | 3. Admin — Project Management | 3/4 | In progress | - |
-| 4. Collaboration | 0/? | Not started | - |
+| 4. Collaboration | 0/3 | Not started | - |
 | 5. Scoring | 0/? | Not started | - |
 
 ---
@@ -145,3 +148,4 @@ _Updated: 2026-04-21 — Phase 3 planned (4 plans: backend API, store+routing, P
 _Updated: 2026-04-25 — Phase 3 Plan 1 complete (1/4 plans: backend projects router + multer upload)_
 _Updated: 2026-04-25 — Phase 3 Plan 2 complete (2/4 plans: useProjectStore + App.jsx route tree)_
 _Updated: 2026-04-25 — Phase 3 Plan 3 complete (3/4 plans: ProjectsPage card grid + New Project form + CSS)_
+_Updated: 2026-04-26 — Phase 4 planned (3 plans: backend routes, store extension, frontend UI)_
