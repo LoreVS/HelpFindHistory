@@ -13,7 +13,9 @@ const router = express.Router()
 // ── Storage engine: disk, per-project subdirectory (D-12) ────────────────────
 const storage = multer.diskStorage({
   destination(req, _file, cb) {
-    const dir = path.join(__dirname, '../data/uploads', String(req.params.id))
+    const safeId = String(Number(req.params.id))
+    if (safeId === 'NaN') return cb(new Error('Invalid project id'), null)
+    const dir = path.join(__dirname, '../data/uploads', safeId)
     fs.mkdirSync(dir, { recursive: true })
     cb(null, dir)
   },
@@ -60,12 +62,13 @@ router.get('/', requireAuth, (req, res) => {
 
 // ── GET /api/projects/:id — project + its fragments (D-18, PROJ-04, COLLAB-05) ─
 router.get('/:id', requireAuth, (req, res) => {
-  const project = db.prepare('SELECT * FROM projects WHERE id = ?').get(req.params.id)
+  const projectId = Number(req.params.id)
+  const project = db.prepare('SELECT * FROM projects WHERE id = ?').get(projectId)
   if (!project) return res.status(404).json({ error: 'Project not found.' })
 
   const fragments = db.prepare(
     'SELECT * FROM fragments WHERE project_id = ? ORDER BY created_at ASC'
-  ).all(req.params.id)
+  ).all(projectId)
 
   // Parse metadata JSON for each fragment
   const fragsWithMeta = fragments.map(f => ({
@@ -80,7 +83,7 @@ router.get('/:id', requireAuth, (req, res) => {
     JOIN users u ON u.id = a.user_id
     WHERE a.project_id = ? AND a.status IN ('published', 'approved', 'rejected')
     ORDER BY a.submitted_at DESC
-  `).all(req.params.id)
+  `).all(projectId)
 
   const attemptsWithLayout = attempts.map(a => ({
     ...a,
@@ -97,7 +100,7 @@ router.get('/:id', requireAuth, (req, res) => {
       WHERE a.project_id = ? AND a.status = 'approved'
       ORDER BY a.reviewed_at DESC
       LIMIT 1
-    `).get(req.params.id)
+    `).get(projectId)
     if (solution) {
       try { solution = { ...solution, layout: JSON.parse(solution.layout) } } catch { /* leave as string */ }
     }
