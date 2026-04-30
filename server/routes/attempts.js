@@ -118,7 +118,7 @@ router.post('/attempts/:id/approve', requireRole('admin'), (req, res) => {
     if (!attempt || attempt.status !== 'published') return null
 
     const project = db.prepare('SELECT * FROM projects WHERE id = ?').get(attempt.project_id)
-    if (!project) return null
+    if (!project || project.status !== 'open') return null
 
     const now = new Date().toISOString()
 
