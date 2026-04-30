@@ -34,6 +34,12 @@ const useAuthStore = create(
           set({ token: null, user: null, initialized: true })
         }
       },
+
+      setScore(score) {
+        set((state) => ({
+          user: state.user ? { ...state.user, score } : state.user,
+        }))
+      },
     }),
     {
       name: 'auth-storage',
