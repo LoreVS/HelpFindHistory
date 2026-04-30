@@ -3,9 +3,9 @@
 ## Current Position
 
 Phase: 5 — Scoring
-Plan: 1 of 3 complete
+Plan: 2 of 3 complete
 Status: In progress
-Last activity: 2026-04-30 — Phase 5 Plan 1 complete (backend: reward column, approve/reject endpoints, /users/me)
+Last activity: 2026-04-30 — Phase 5 Plan 2 complete (frontend stores: setScore, approveAttempt, rejectAttempt, fetchUserScore, reward in createProject)
 
 ## Progress Bar
 
@@ -71,6 +71,9 @@ Last activity: 2026-04-30 — Phase 5 Plan 1 complete (backend: reward column, a
 - doApprove transaction re-fetches attempt and project inside transaction — avoids TOCTOU race
 - GET /api/users/me placed in attempts.js router (requireAuth already at router level) — no new router file needed
 - toCanvasFragment stores dbId (numeric) + id (string) to disambiguate Konva IDs from DB IDs
+- setScore merges score into user via spread — avoids full user object replacement in authStore
+- fetchUserScore uses try/catch with console.error (not throw) — score sync is best-effort, not load-blocking
+- reward = 1 default in createProject signature — backward-compatible with existing callers that omit reward
 
 ## Blockers
 
@@ -85,4 +88,4 @@ None.
 | 260429-2ey | Clear data script and filter submitted projects from main list | 2026-04-29 | ebc160f | [260429-2ey-clear-data-script-and-filter-submitted-projects](.planning/quick/260429-2ey-clear-data-script-and-filter-submitted-projects/) |
 
 ---
-_Last updated: 2026-04-30 — Completed Phase 5 Plan 1: backend scoring endpoints (reward column, approve/reject, /users/me)_
+_Last updated: 2026-04-30 — Completed Phase 5 Plan 2: frontend store scoring actions (setScore, approveAttempt, rejectAttempt, fetchUserScore, reward in createProject)_
