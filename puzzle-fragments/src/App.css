@@ -586,6 +586,21 @@ body {
   flex-shrink: 0;
 }
 
+/* Score chip — shown for role=user in all page headers (SCORE-05) */
+.score-chip {
+  background: #161616;
+  border: 1px solid #2a2a2a;
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  font-weight: 400;
+  color: #888;
+  letter-spacing: 0.06em;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
 /* ── END SESSION button ───────────────────────── */
 
 .btn-end-session {

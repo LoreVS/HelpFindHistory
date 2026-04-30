@@ -15,6 +15,7 @@ function CanvasApp() {
   const role = useRole()
   const token = useAuthStore((state) => state.token)
   const logout = useAuthStore((state) => state.logout)
+  const user = useAuthStore((state) => state.user)
   const navigate = useNavigate()
 
   function handleEndSession() {
@@ -29,6 +30,9 @@ function CanvasApp() {
         <span className="tagline">// відновлення форми з уламків</span>
         {role === 'admin' && (
           <span className="admin-badge">ADMIN</span>
+        )}
+        {role === 'user' && (
+          <span className="score-chip">&#9733; {user?.score ?? 0}</span>
         )}
         <div className="header-hint">
           <kbd>drag</kbd> переміщення &nbsp;·&nbsp; <kbd>corner</kbd> масштаб &nbsp;·&nbsp; <kbd>↻</kbd> ротація
