@@ -15,6 +15,7 @@ CREATE TABLE IF NOT EXISTS projects (
   owner_id    INTEGER NOT NULL REFERENCES users(id),
   name        TEXT    NOT NULL,
   description TEXT    NOT NULL DEFAULT '',
+  reward      INTEGER NOT NULL DEFAULT 1,
   status      TEXT    NOT NULL DEFAULT 'open' CHECK(status IN ('open', 'closed')),
   created_at  TEXT    NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now')),
   closed_at   TEXT

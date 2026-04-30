@@ -25,4 +25,11 @@ const schema = fs.readFileSync(path.join(__dirname, 'schema.sql'), 'utf8');
 const ddl = schema.replace(/^\s*PRAGMA[^;]+;\s*/gim, '').trim();
 db.exec(ddl);
 
+// Migration: add reward column to existing databases (safe to run repeatedly)
+try {
+  db.prepare("ALTER TABLE projects ADD COLUMN reward INTEGER NOT NULL DEFAULT 1").run()
+} catch {
+  // Column already exists — safe to ignore
+}
+
 module.exports = db;
