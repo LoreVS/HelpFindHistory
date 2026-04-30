@@ -220,6 +220,7 @@ const useProjectStore = create((set) => ({
         currentProject: {
           ...state.currentProject,
           status: 'closed',
+          closed_at: updated.reviewed_at ?? new Date().toISOString(),
           attempts: state.currentProject.attempts.map((a) =>
             a.id === attemptId ? { ...a, status: 'approved' } : a
           ),
