@@ -266,6 +266,10 @@ export default function ProjectDetailPage() {
   useEffect(() => {
     if (!currentProject) return
 
+    // Reset attempt-specific flags on every project change to avoid stale state
+    setCurrentAttemptId(null)
+    setIsPublished(false)
+
     if (currentProject.status === 'closed') {
       // COLLAB-05: load approved solution layout (read-only)
       const sol = currentProject.solution
