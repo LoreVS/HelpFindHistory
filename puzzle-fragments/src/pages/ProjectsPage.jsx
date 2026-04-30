@@ -9,8 +9,9 @@ export default function ProjectsPage() {
   const navigate  = useNavigate()
   const role      = useRole()
   const logout    = useAuthStore((state) => state.logout)
+  const user      = useAuthStore((state) => state.user)
 
-  const { projects, loading, error, fetchProjects, createProject, myAttempts, fetchMyAttempts } = useProjectStore()
+  const { projects, loading, error, fetchProjects, createProject, myAttempts, fetchMyAttempts, fetchUserScore } = useProjectStore()
 
   const finishedProjectIds = new Set(myAttempts.map((a) => a.project_id))
   const visibleProjects = projects.filter((p) => !finishedProjectIds.has(p.id))
@@ -21,11 +22,15 @@ export default function ProjectsPage() {
   const [newDesc, setNewDesc]         = useState('')
   const [creating, setCreating]       = useState(false)
   const [createError, setCreateError] = useState(null)
+  const [newReward, setNewReward]     = useState(1)
 
   useEffect(() => {
     fetchProjects()
-    if (role !== 'admin') fetchMyAttempts()
-  }, [fetchProjects, fetchMyAttempts, role])
+    if (role !== 'admin') {
+      fetchMyAttempts()
+      fetchUserScore()
+    }
+  }, [fetchProjects, fetchMyAttempts, fetchUserScore, role])
 
   function attemptStatusLabel(status) {
     if (status === 'published') return 'on review'
@@ -38,7 +43,7 @@ export default function ProjectsPage() {
     setCreating(true)
     setCreateError(null)
     try {
-      const project = await createProject(newName.trim(), newDesc.trim())
+      const project = await createProject(newName.trim(), newDesc.trim(), Number(newReward))
       // D-05: navigate to /projects/:id after creation
       navigate(`/projects/${project.id}`)
     } catch (err) {
@@ -62,6 +67,9 @@ export default function ProjectsPage() {
         </div>
         <div className="projects-header-right">
           {role === 'admin' && <span className="admin-badge">ADMIN</span>}
+          {role === 'user' && (
+            <span className="score-chip">&#9733; {user?.score ?? 0}</span>
+          )}
           <button className="btn-end-session" onClick={handleEndSession} type="button">
             END SESSION
           </button>
@@ -105,6 +113,18 @@ export default function ProjectsPage() {
               onChange={(e) => setNewDesc(e.target.value)}
               placeholder="Brief description of the artifact..."
               rows={3}
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="proj-reward">Reward (pts)</label>
+            <input
+              id="proj-reward"
+              type="number"
+              min={1}
+              value={newReward}
+              onChange={(e) => setNewReward(e.target.value)}
+              placeholder="e.g. 5"
+              required
             />
           </div>
           {createError && <p className="form-error">{createError}</p>}
