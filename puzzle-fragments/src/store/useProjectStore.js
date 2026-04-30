@@ -60,11 +60,11 @@ const useProjectStore = create((set) => ({
   },
 
   /** POST /api/projects — create project, returns new project row */
-  async createProject(name, description) {
+  async createProject(name, description, reward = 1) {
     const res = await fetch(`${API}/api/projects`, {
       method: 'POST',
       headers: { ...authHeaders(), 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, description }),
+      body: JSON.stringify({ name, description, reward }),
     })
     if (!res.ok) {
       const body = await res.json().catch(() => ({}))
@@ -201,6 +201,69 @@ const useProjectStore = create((set) => ({
         },
       }
     })
+  },
+
+  /** POST /api/attempts/:id/approve — approve attempt, auto-closes project (SCORE-02) */
+  async approveAttempt(attemptId) {
+    const res = await fetch(`${API}/api/attempts/${attemptId}/approve`, {
+      method: 'POST',
+      headers: authHeaders(),
+    })
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}))
+      throw new Error(body.error || `HTTP ${res.status}`)
+    }
+    const updated = await res.json()
+    set((state) => {
+      if (!state.currentProject) return {}
+      return {
+        currentProject: {
+          ...state.currentProject,
+          status: 'closed',
+          attempts: state.currentProject.attempts.map((a) =>
+            a.id === attemptId ? { ...a, status: 'approved' } : a
+          ),
+        },
+      }
+    })
+    return updated
+  },
+
+  /** POST /api/attempts/:id/reject — reject attempt, canvas unlocks (SCORE-03) */
+  async rejectAttempt(attemptId) {
+    const res = await fetch(`${API}/api/attempts/${attemptId}/reject`, {
+      method: 'POST',
+      headers: authHeaders(),
+    })
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}))
+      throw new Error(body.error || `HTTP ${res.status}`)
+    }
+    const updated = await res.json()
+    set((state) => {
+      if (!state.currentProject) return {}
+      return {
+        currentProject: {
+          ...state.currentProject,
+          attempts: state.currentProject.attempts.map((a) =>
+            a.id === attemptId ? { ...a, status: 'rejected' } : a
+          ),
+        },
+      }
+    })
+    return updated
+  },
+
+  /** GET /api/users/me — fetch authenticated user's score and sync to authStore (SCORE-05) */
+  async fetchUserScore() {
+    try {
+      const res = await fetch(`${API}/api/users/me`, { headers: authHeaders() })
+      if (!res.ok) return
+      const data = await res.json()
+      useAuthStore.getState().setScore(data.score)
+    } catch (err) {
+      console.error('[fetchUserScore]', err)
+    }
   },
 }))
 
