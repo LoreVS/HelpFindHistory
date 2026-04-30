@@ -27,13 +27,17 @@ const upload = multer({ storage, limits: { fileSize: 20 * 1024 * 1024 } })
 
 // ── POST /api/projects — create project (D-18, PROJ-01) ─────────────────────
 router.post('/', requireAuth, requireRole('admin'), (req, res) => {
-  const { name, description = '' } = req.body
+  const { name, description = '', reward = 1 } = req.body
   if (!name || typeof name !== 'string' || !name.trim()) {
     return res.status(400).json({ error: 'Project name is required.' })
   }
+  const rewardNum = Number(reward)
+  if (!Number.isInteger(rewardNum) || rewardNum < 1) {
+    return res.status(400).json({ error: 'reward must be an integer >= 1.' })
+  }
   const result = db.prepare(
-    'INSERT INTO projects (owner_id, name, description) VALUES (?, ?, ?)'
-  ).run(req.user.id, name.trim(), description.trim())
+    'INSERT INTO projects (owner_id, name, description, reward) VALUES (?, ?, ?, ?)'
+  ).run(req.user.id, name.trim(), description.trim(), rewardNum)
 
   const project = db.prepare('SELECT * FROM projects WHERE id = ?').get(result.lastInsertRowid)
   return res.status(201).json(project)
@@ -71,12 +75,17 @@ router.get('/:id', requireAuth, (req, res) => {
 
   // Fetch published attempts with submitter username for Phase 3 attempts list (D-07)
   const attempts = db.prepare(`
-    SELECT a.id, a.status, a.submitted_at, u.email AS submitter_email
+    SELECT a.id, a.layout, a.status, a.submitted_at, u.email AS submitter_email
     FROM attempts a
     JOIN users u ON u.id = a.user_id
     WHERE a.project_id = ? AND a.status IN ('published', 'approved', 'rejected')
     ORDER BY a.submitted_at DESC
   `).all(req.params.id)
+
+  const attemptsWithLayout = attempts.map(a => ({
+    ...a,
+    layout: (() => { try { return JSON.parse(a.layout) } catch { return [] } })(),
+  }))
 
   // Inject solution for closed projects (D-16, D-17, COLLAB-05)
   let solution = null
@@ -94,7 +103,7 @@ router.get('/:id', requireAuth, (req, res) => {
     }
   }
 
-  return res.json({ ...project, fragments: fragsWithMeta, attempts, solution })
+  return res.json({ ...project, fragments: fragsWithMeta, attempts: attemptsWithLayout, solution })
 })
 
 // ── POST /api/projects/:id/fragments — upload fragment (D-18, PROJ-02) ──────
