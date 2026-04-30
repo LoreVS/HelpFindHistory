@@ -646,13 +646,14 @@ function AttemptRow({ attempt, currentProject }) {
     try {
       await approveAttempt(attempt.id)
       // Re-fetch project to sync status and attempts list
-      if (currentProject?.id) fetchProject(currentProject.id)
+      if (currentProject?.id) await fetchProject(currentProject.id)
+      setShowModal(false)
     } catch (e) {
       console.error('[AttemptRow] approve failed:', e)
+    } finally {
+      setApproving(false)
+      setShowConfirm(false)
     }
-    setApproving(false)
-    setShowConfirm(false)
-    setShowModal(false)
   }
 
   async function handleReject() {
