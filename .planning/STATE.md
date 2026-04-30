@@ -3,13 +3,13 @@
 ## Current Position
 
 Phase: 5 — Scoring
-Plan: 2 of 3 complete
-Status: In progress
-Last activity: 2026-04-30 — Phase 5 Plan 2 complete (frontend stores: setScore, approveAttempt, rejectAttempt, fetchUserScore, reward in createProject)
+Plan: 3 of 3 complete
+Status: Complete
+Last activity: 2026-04-30 — Phase 5 Plan 3 complete (scoring UI: reward input, AttemptRow with canvas preview + approve/reject workflow, score chip in all headers)
 
 ## Progress Bar
 
-[████████░░] 80% — 4 of 5 phases complete
+[██████████] 100% — 5 of 5 phases complete
 
 ## Accumulated Context
 
@@ -65,7 +65,7 @@ Last activity: 2026-04-30 — Phase 5 Plan 2 complete (frontend stores: setScore
 - Local canvasFragments state initialized from server data; explicit Save Layout is only write path (D-16)
 - Blob URL fetched via fetch() inside ProjectDropzone before upload — useBackgroundRemoval returns blob URL not raw blob
 - isClosed disables ProjectDropzone and Save Layout button — closed projects fully read-only in UI (D-09, T-03-14)
-- AttemptRow modal stubs Approve/Reject with console.log — wired in Phase 5 (D-08)
+- AttemptRow modal stubs Approve/Reject replaced with full Phase 5 implementation (D-08)
 - reward defaults to 1 in schema DDL and migration guard — consistent behavior on fresh vs existing DBs
 - db.prepare().run() used for ALTER TABLE migration (not db.exec) — consistent with better-sqlite3 API
 - doApprove transaction re-fetches attempt and project inside transaction — avoids TOCTOU race
@@ -74,6 +74,10 @@ Last activity: 2026-04-30 — Phase 5 Plan 2 complete (frontend stores: setScore
 - setScore merges score into user via spread — avoids full user object replacement in authStore
 - fetchUserScore uses try/catch with console.error (not throw) — score sync is best-effort, not load-blocking
 - reward = 1 default in createProject signature — backward-compatible with existing callers that omit reward
+- AttemptRow receives currentProject prop to access fragments and reward for canvas preview and confirm copy
+- approve-confirm-backdrop uses stopPropagation (not setShowConfirm) — prevents accidental modal close on backdrop click (T-05-12)
+- fetchUserScore called in useEffect role branch on both ProjectsPage and ProjectDetailPage — score stays fresh on every page mount
+- score chip placed before btn-end-session in all three headers (ProjectsPage, ProjectDetailPage, CanvasApp) — consistent ordering
 
 ## Blockers
 
@@ -88,4 +92,4 @@ None.
 | 260429-2ey | Clear data script and filter submitted projects from main list | 2026-04-29 | ebc160f | [260429-2ey-clear-data-script-and-filter-submitted-projects](.planning/quick/260429-2ey-clear-data-script-and-filter-submitted-projects/) |
 
 ---
-_Last updated: 2026-04-30 — Completed Phase 5 Plan 2: frontend store scoring actions (setScore, approveAttempt, rejectAttempt, fetchUserScore, reward in createProject)_
+_Last updated: 2026-04-30 — Completed Phase 5 Plan 3: scoring UI (reward input, AttemptRow canvas preview + approve/reject workflow, score chip in all headers). Phase 5 complete — all 5 phases of v1.1 complete._

@@ -96,7 +96,7 @@ Plans:
 Plans:
 - [x] 05-01-PLAN.md — Backend: reward column + migration, update projects POST/GET, approve/reject endpoints, GET /api/users/me
 - [x] 05-02-PLAN.md — Frontend store: setScore on authStore; approveAttempt, rejectAttempt, fetchUserScore, updated createProject on useProjectStore
-- [ ] 05-03-PLAN.md — Frontend UI: reward input in New Project form, AttemptRow full replacement with canvas preview + confirm modal, score chip in all headers, CSS
+- [x] 05-03-PLAN.md — Frontend UI: reward input in New Project form, AttemptRow full replacement with canvas preview + confirm modal, score chip in all headers, CSS
 
 ---
 
@@ -108,7 +108,7 @@ Plans:
 | 2. Frontend Auth | 3/3 | Complete | 2026-04-21 |
 | 3. Admin — Project Management | 3/4 | In progress | - |
 | 4. Collaboration | 0/3 | Not started | - |
-| 5. Scoring | 2/3 | In progress | - |
+| 5. Scoring | 3/3 | Complete | 2026-04-30 |
 
 ---
 
@@ -155,3 +155,4 @@ _Updated: 2026-04-26 — Phase 4 planned (3 plans: backend routes, store extensi
 _Updated: 2026-04-29 — Phase 5 planned (3 plans: backend scoring endpoints, store actions, UI)_
 _Updated: 2026-04-30 — Phase 5 Plan 1 complete (1/3 plans: reward column + migration, approve/reject endpoints, /users/me)_
 _Updated: 2026-04-30 — Phase 5 Plan 2 complete (2/3 plans: frontend store scoring actions — setScore, approveAttempt, rejectAttempt, fetchUserScore, reward in createProject)_
+_Updated: 2026-04-30 — Phase 5 Plan 3 complete (3/3 plans: scoring UI — reward input, AttemptRow with canvas preview + approve/reject workflow, score chip in all headers). Phase 5 complete._
