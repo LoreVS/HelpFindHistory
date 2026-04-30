@@ -2,14 +2,14 @@
 
 ## Current Position
 
-Phase: 4 — Collaboration
-Plan: 0 of 3 complete
-Status: Ready to execute
-Last activity: 2026-04-27 — Phase 4 planned (3 plans: backend routes, store extension, frontend UI)
+Phase: 5 — Scoring
+Plan: 1 of 3 complete
+Status: In progress
+Last activity: 2026-04-30 — Phase 5 Plan 1 complete (backend: reward column, approve/reject endpoints, /users/me)
 
 ## Progress Bar
 
-[████      ] 40% — 2 of 5 phases complete
+[████████░░] 80% — 4 of 5 phases complete
 
 ## Accumulated Context
 
@@ -66,6 +66,10 @@ Last activity: 2026-04-27 — Phase 4 planned (3 plans: backend routes, store ex
 - Blob URL fetched via fetch() inside ProjectDropzone before upload — useBackgroundRemoval returns blob URL not raw blob
 - isClosed disables ProjectDropzone and Save Layout button — closed projects fully read-only in UI (D-09, T-03-14)
 - AttemptRow modal stubs Approve/Reject with console.log — wired in Phase 5 (D-08)
+- reward defaults to 1 in schema DDL and migration guard — consistent behavior on fresh vs existing DBs
+- db.prepare().run() used for ALTER TABLE migration (not db.exec) — consistent with better-sqlite3 API
+- doApprove transaction re-fetches attempt and project inside transaction — avoids TOCTOU race
+- GET /api/users/me placed in attempts.js router (requireAuth already at router level) — no new router file needed
 - toCanvasFragment stores dbId (numeric) + id (string) to disambiguate Konva IDs from DB IDs
 
 ## Blockers
@@ -81,4 +85,4 @@ None.
 | 260429-2ey | Clear data script and filter submitted projects from main list | 2026-04-29 | ebc160f | [260429-2ey-clear-data-script-and-filter-submitted-projects](.planning/quick/260429-2ey-clear-data-script-and-filter-submitted-projects/) |
 
 ---
-_Last updated: 2026-04-29 - Completed quick task 260429-2ey: Clear data script + filter submitted projects from main list_
+_Last updated: 2026-04-30 — Completed Phase 5 Plan 1: backend scoring endpoints (reward column, approve/reject, /users/me)_

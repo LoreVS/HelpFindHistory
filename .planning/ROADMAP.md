@@ -84,16 +84,19 @@ Plans:
 - [ ] 04-03-PLAN.md — Frontend UI: ProjectDetailPage user toolbar, three-way canvas hydration, read-only canvas, publish modal, solver attribution; 9 new CSS classes
 
 ### Phase 5: Scoring
-**Goal**: Admins can review, approve, or reject published attempts; approved attempts auto-close the project and award a point to the solver; users can see their total score.
+**Goal**: Admins can review, approve, or reject published attempts; approved attempts auto-close the project and award a configurable reward to the solver; users can see their total score in the header.
 **Depends on**: Phase 4
 **Requirements**: SCORE-01, SCORE-02, SCORE-03, SCORE-04, SCORE-05
 **Success Criteria** (what must be TRUE):
-  1. Admin can view all published attempts for a project in a review interface
-  2. Admin can approve an attempt, which simultaneously closes the project and awards 1 point to the submitter
-  3. Admin can reject a published attempt, returning it to a rejected state visible to the submitter
-  4. A user whose attempt is approved sees their total score increment by 1 on their profile or score display
-**Plans**: TBD
-**UI hint**: yes
+  1. Admin can view all published attempts for a project in a review interface with a live canvas preview
+  2. Admin can approve an attempt, which simultaneously closes the project and awards project.reward points to the submitter
+  3. Admin can reject a published attempt, returning it to a rejected state visible to the submitter; canvas unlocks for revision
+  4. A user whose attempt is approved sees their total score increment by project.reward on their score chip
+**Plans:** 3 plans
+Plans:
+- [x] 05-01-PLAN.md — Backend: reward column + migration, update projects POST/GET, approve/reject endpoints, GET /api/users/me
+- [ ] 05-02-PLAN.md — Frontend store: setScore on authStore; approveAttempt, rejectAttempt, fetchUserScore, updated createProject on useProjectStore
+- [ ] 05-03-PLAN.md — Frontend UI: reward input in New Project form, AttemptRow full replacement with canvas preview + confirm modal, score chip in all headers, CSS
 
 ---
 
@@ -105,7 +108,7 @@ Plans:
 | 2. Frontend Auth | 3/3 | Complete | 2026-04-21 |
 | 3. Admin — Project Management | 3/4 | In progress | - |
 | 4. Collaboration | 0/3 | Not started | - |
-| 5. Scoring | 0/? | Not started | - |
+| 5. Scoring | 1/3 | In progress | - |
 
 ---
 
@@ -149,3 +152,5 @@ _Updated: 2026-04-25 — Phase 3 Plan 1 complete (1/4 plans: backend projects ro
 _Updated: 2026-04-25 — Phase 3 Plan 2 complete (2/4 plans: useProjectStore + App.jsx route tree)_
 _Updated: 2026-04-25 — Phase 3 Plan 3 complete (3/4 plans: ProjectsPage card grid + New Project form + CSS)_
 _Updated: 2026-04-26 — Phase 4 planned (3 plans: backend routes, store extension, frontend UI)_
+_Updated: 2026-04-29 — Phase 5 planned (3 plans: backend scoring endpoints, store actions, UI)_
+_Updated: 2026-04-30 — Phase 5 Plan 1 complete (1/3 plans: reward column + migration, approve/reject endpoints, /users/me)_
