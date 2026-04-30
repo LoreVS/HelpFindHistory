@@ -2,7 +2,7 @@
 
 const express = require('express')
 const db = require('../db')
-const { requireAuth } = require('../middleware/auth')
+const { requireAuth, requireRole } = require('../middleware/auth')
 
 const router = express.Router()
 
@@ -96,6 +96,68 @@ router.post('/attempts/:id/publish', (req, res) => {
     .run(submittedAt, Number(req.params.id))
 
   const updated = db.prepare('SELECT * FROM attempts WHERE id = ?').get(Number(req.params.id))
+  return res.json(updated)
+})
+
+// ── GET /api/users/me — fetch authenticated user's score (SCORE-05) ──────────
+router.get('/users/me', (req, res) => {
+  const user = db.prepare('SELECT id, score FROM users WHERE id = ?').get(req.user.id)
+  if (!user) return res.status(404).json({ error: 'User not found.' })
+  return res.json(user)
+})
+
+// ── POST /api/attempts/:id/approve — approve attempt (admin only) ────────────
+// T-05-01: requireRole('admin') blocks non-admin callers (privilege escalation guard)
+// T-05-02: status guard inside transaction prevents double-approval
+// T-05-03: db.transaction wraps 4 writes atomically
+router.post('/attempts/:id/approve', requireRole('admin'), (req, res) => {
+  const attemptId = Number(req.params.id)
+
+  const doApprove = db.transaction((id) => {
+    const attempt = db.prepare('SELECT * FROM attempts WHERE id = ?').get(id)
+    if (!attempt || attempt.status !== 'published') return null
+
+    const project = db.prepare('SELECT * FROM projects WHERE id = ?').get(attempt.project_id)
+    if (!project) return null
+
+    const now = new Date().toISOString()
+
+    db.prepare("UPDATE attempts SET status = 'approved', reviewed_at = ? WHERE id = ?")
+      .run(now, id)
+    db.prepare("UPDATE projects SET status = 'closed', closed_at = ? WHERE id = ?")
+      .run(now, attempt.project_id)
+    db.prepare('INSERT INTO scores (user_id, attempt_id, project_id, points) VALUES (?, ?, ?, ?)')
+      .run(attempt.user_id, id, attempt.project_id, project.reward)
+    db.prepare('UPDATE users SET score = score + ? WHERE id = ?')
+      .run(project.reward, attempt.user_id)
+
+    return db.prepare('SELECT * FROM attempts WHERE id = ?').get(id)
+  })
+
+  const updated = doApprove(attemptId)
+  if (!updated) {
+    return res.status(409).json({ error: 'Only published attempts can be approved.' })
+  }
+  return res.json(updated)
+})
+
+// ── POST /api/attempts/:id/reject — reject attempt (admin only) ─────────────
+// T-05-01: requireRole('admin') blocks non-admin callers
+// T-05-04: status guard prevents rejecting non-published attempts
+router.post('/attempts/:id/reject', requireRole('admin'), (req, res) => {
+  const attemptId = Number(req.params.id)
+
+  const attempt = db.prepare('SELECT * FROM attempts WHERE id = ?').get(attemptId)
+  if (!attempt) return res.status(404).json({ error: 'Attempt not found.' })
+  if (attempt.status !== 'published') {
+    return res.status(409).json({ error: 'Only published attempts can be rejected.' })
+  }
+
+  const now = new Date().toISOString()
+  db.prepare("UPDATE attempts SET status = 'rejected', reviewed_at = ? WHERE id = ?")
+    .run(now, attemptId)
+
+  const updated = db.prepare('SELECT * FROM attempts WHERE id = ?').get(attemptId)
   return res.json(updated)
 })
 
