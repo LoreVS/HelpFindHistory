@@ -397,3 +397,91 @@
   color: #d4c5a9;
   font-weight: 400;
 }
+
+/* ── Phase 5: Scoring — attempt review modal + confirm modal ─────────────── */
+
+/* Wide modal variant to accommodate canvas preview (D-04) */
+.attempt-modal--canvas {
+  max-width: 720px;
+  width: 100%;
+}
+
+/* Fixed-height canvas preview container inside the review modal */
+.attempt-modal-canvas {
+  width: 100%;
+  height: 340px;
+  background: #111111;
+  border: 1px solid #222222;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Second-layer backdrop — sits above the review modal (D-07) */
+.approve-confirm-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+}
+
+/* Confirmation modal container — narrower than review modal */
+.approve-confirm-modal {
+  background: #1a1a1a;
+  border: 1px solid #333333;
+  padding: 28px;
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.approve-confirm-modal h3 {
+  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #d4c5a9;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+/* Confirmation modal body copy */
+.approve-confirm-body {
+  font-family: 'Courier New', monospace;
+  font-size: 0.83rem;
+  color: #d4c5a9;
+  line-height: 1.5;
+  margin: 0;
+  font-style: normal;
+}
+
+/* Confirm Approve button — solid green fill for high-confidence permanent action */
+.btn-approve-confirm {
+  background: #1a3a1a;
+  border: 1px solid #2d6b2d;
+  color: #5ccc5c;
+  padding: 8px 16px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.btn-approve-confirm:hover {
+  background: #5ccc5c;
+  color: #111111;
+}
+
+.btn-approve-confirm:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}

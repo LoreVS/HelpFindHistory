@@ -242,7 +242,8 @@ export default function ProjectDetailPage() {
   const logout    = useAuthStore((state) => state.logout)
 
   const { currentProject, loading, error, fetchProject, saveLayout, closeProject,
-          fetchUserDraft, saveDraft, publishAttempt } = useProjectStore()
+          fetchUserDraft, saveDraft, publishAttempt, approveAttempt, rejectAttempt, fetchUserScore } = useProjectStore()
+  const user = useAuthStore((state) => state.user)
 
   // Local canvas fragment state — hydrated from server, updated on drag/rotate
   const [canvasFragments, setCanvasFragments] = useState([])
@@ -283,6 +284,7 @@ export default function ProjectDetailPage() {
 
     if (role !== 'admin') {
       // COLLAB-02/03: fetch user draft; hydrate from draft or reference layout
+      fetchUserScore()
       fetchUserDraft(currentProject.id).then((draft) => {
         if (draft?.layout && Array.isArray(draft.layout)) {
           const mapped = currentProject.fragments.map((f, i) => {
@@ -447,6 +449,9 @@ export default function ProjectDetailPage() {
         </div>
         <div className="detail-header-right">
           {role === 'admin' && <span className="admin-badge">ADMIN</span>}
+          {role === 'user' && (
+            <span className="score-chip">&#9733; {user?.score ?? 0}</span>
+          )}
           <button className="btn-end-session" onClick={handleEndSession} type="button">
             END SESSION
           </button>
@@ -574,7 +579,7 @@ export default function ProjectDetailPage() {
               </thead>
               <tbody>
                 {currentProject.attempts.map((attempt) => (
-                  <AttemptRow key={attempt.id} attempt={attempt} />
+                  <AttemptRow key={attempt.id} attempt={attempt} currentProject={currentProject} />
                 ))}
               </tbody>
             </table>
@@ -613,9 +618,53 @@ export default function ProjectDetailPage() {
   )
 }
 
-// D-08: Attempt row with modal stub (approval wired in Phase 5)
-function AttemptRow({ attempt }) {
-  const [showModal, setShowModal] = useState(false)
+// D-08 fulfilled: Phase 5 AttemptRow with canvas preview and approve/reject workflow
+function AttemptRow({ attempt, currentProject }) {
+  const [showModal,   setShowModal]   = useState(false)
+  const [showConfirm, setShowConfirm] = useState(false)
+  const [approving,   setApproving]   = useState(false)
+  const [rejecting,   setRejecting]   = useState(false)
+  const role = useRole()
+  const { approveAttempt, rejectAttempt } = useProjectStore()
+  const { fetchProject } = useProjectStore()
+
+  // Build read-only canvas fragments from attempt.layout merged with project fragments
+  // Mirrors COLLAB-05 solution canvas hydration pattern
+  const previewFragments = useMemo(() => {
+    if (!currentProject?.fragments || !attempt.layout) return []
+    return currentProject.fragments.map((f, i) => {
+      const base = toCanvasFragment(f, i)
+      const pos = Array.isArray(attempt.layout)
+        ? attempt.layout.find((l) => String(l.id) === String(f.id) || l.id === f.id || l.dbId === f.id)
+        : null
+      return pos ? { ...base, ...pos } : base
+    })
+  }, [currentProject, attempt.layout])
+
+  async function handleApprove() {
+    setApproving(true)
+    try {
+      await approveAttempt(attempt.id)
+      // Re-fetch project to sync status and attempts list
+      if (currentProject?.id) fetchProject(currentProject.id)
+    } catch (e) {
+      console.error('[AttemptRow] approve failed:', e)
+    }
+    setApproving(false)
+    setShowConfirm(false)
+    setShowModal(false)
+  }
+
+  async function handleReject() {
+    setRejecting(true)
+    try {
+      await rejectAttempt(attempt.id)
+    } catch (e) {
+      console.error('[AttemptRow] reject failed:', e)
+    }
+    setRejecting(false)
+    setShowModal(false)
+  }
 
   return (
     <>
@@ -634,33 +683,95 @@ function AttemptRow({ attempt }) {
         <td><span className="attempt-view-hint">view →</span></td>
       </tr>
 
-      {/* D-08: modal stub — Approve/Reject stubbed for Phase 5 */}
+      {/* Attempt review modal with canvas preview (D-04, D-05, D-06) */}
       {showModal && (
         <tr>
           <td colSpan={4}>
             <div className="attempt-modal-backdrop" onClick={() => setShowModal(false)}>
-              <div className="attempt-modal" onClick={(e) => e.stopPropagation()}>
+              <div
+                className="attempt-modal attempt-modal--canvas"
+                onClick={(e) => e.stopPropagation()}
+              >
                 <h3>Attempt by {attempt.submitter_email}</h3>
-                <p className="attempt-modal-placeholder">
-                  [Canvas preview will be shown here in Phase 5]
+
+                {/* Read-only canvas preview — reuses ProjectCanvas with readOnly=true (D-04) */}
+                <div className="attempt-modal-canvas">
+                  {previewFragments.length > 0 ? (
+                    <ProjectCanvas
+                      fragments={previewFragments}
+                      onFragmentUpdate={() => {}}
+                      readOnly={true}
+                    />
+                  ) : (
+                    <p style={{ color: '#888', fontSize: '0.83rem', margin: 0 }}>
+                      Loading canvas…
+                    </p>
+                  )}
+                </div>
+
+                <div className="attempt-modal-actions">
+                  {role === 'admin' && (
+                    <button
+                      className="btn-approve"
+                      onClick={() => setShowConfirm(true)}
+                      disabled={attempt.status !== 'published' || approving}
+                      type="button"
+                    >
+                      Approve Attempt
+                    </button>
+                  )}
+                  {role === 'admin' && (
+                    <button
+                      className="btn-reject"
+                      onClick={handleReject}
+                      disabled={attempt.status !== 'published' || rejecting}
+                      type="button"
+                    >
+                      {rejecting ? 'Rejecting…' : 'Reject Attempt'}
+                    </button>
+                  )}
+                  <button
+                    className="btn-modal-close"
+                    onClick={() => setShowModal(false)}
+                    type="button"
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+            </div>
+          </td>
+        </tr>
+      )}
+
+      {/* Approve confirmation modal — second overlay (D-07) */}
+      {showConfirm && (
+        <tr>
+          <td colSpan={4}>
+            <div
+              className="approve-confirm-backdrop"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="approve-confirm-modal">
+                <h3>Approve this attempt?</h3>
+                <p className="approve-confirm-body">
+                  This will close the project and award {currentProject?.reward ?? '?'} pts to {attempt.submitter_email}.
                 </p>
                 <div className="attempt-modal-actions">
                   <button
-                    className="btn-approve"
-                    onClick={() => { console.log('[stub] approve attempt', attempt.id); setShowModal(false) }}
+                    className="btn-approve-confirm"
+                    onClick={handleApprove}
+                    disabled={approving}
                     type="button"
                   >
-                    Approve
+                    {approving ? 'Approving…' : 'Confirm Approve'}
                   </button>
                   <button
-                    className="btn-reject"
-                    onClick={() => { console.log('[stub] reject attempt', attempt.id); setShowModal(false) }}
+                    className="btn-modal-close"
+                    onClick={() => setShowConfirm(false)}
                     type="button"
                   >
-                    Reject
-                  </button>
-                  <button className="btn-modal-close" onClick={() => setShowModal(false)} type="button">
-                    Close
+                    Keep reviewing
                   </button>
                 </div>
               </div>
