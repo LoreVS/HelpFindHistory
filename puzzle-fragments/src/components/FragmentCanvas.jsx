@@ -109,6 +109,7 @@ export default function FragmentCanvas() {
 
   const [dimensions, setDimensions] = useState({ width: 800, height: 600 })
   const [selectedId, setSelectedId] = useState(null)
+  const [showHints, setShowHints] = useState(true)
   const { fragments, updateFragment } = useFragmentStore()
 
   // Адаптивний розмір
@@ -157,8 +158,20 @@ export default function FragmentCanvas() {
         </div>
       )}
 
+      {/* Перемикач підказок (плаваючий, зліва) */}
+      <div className="hints-toggle-wrap">
+        <button
+          className={`btn-hints-toggle${showHints ? ' btn-hints-toggle--on' : ''}`}
+          onClick={() => setShowHints(v => !v)}
+          type="button"
+          title={showHints ? 'Hide fit hints' : 'Show fit hints'}
+        >
+          {showHints ? 'Hints ON' : 'Hints OFF'}
+        </button>
+      </div>
+
       {/* Легенда активних кольорів сегментів */}
-      {selectedFrag?.segments?.length > 0 && (
+      {showHints && selectedFrag?.segments?.length > 0 && (
         <div className="seg-legend">
           <div className="seg-legend-title">
             {matchCount > 0
@@ -188,10 +201,10 @@ export default function FragmentCanvas() {
             const isSelected = fragment.id === selectedId
 
             // Власні сегменти (для виділеного)
-            const ownSegments = isSelected ? (fragment.segments ?? []) : []
+            const ownSegments = (isSelected && showHints) ? (fragment.segments ?? []) : []
 
             // Сегменти цього уламка що відповідають вибраному
-            const matchSegs = (!isSelected && selectedId)
+            const matchSegs = (!isSelected && selectedId && showHints)
               ? (segmentMatches[fragment.id] ?? []).map(m => {
                   const seg = fragment.segments?.find(s => s.index === m.otherSegIndex)
                   return seg ? { ...seg, color: m.color } : null
