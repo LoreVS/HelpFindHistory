@@ -1,17 +1,31 @@
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500&display=swap');
 
 :root {
+  --bg: #f8f8f8;
+  --surface: #ffffff;
+  --surface-2: #f0f0f0;
+  --border: #e0e0e0;
+  --border-bright: #c8c8c8;
+  --accent: #e8b84b;
+  --accent-glow: rgba(232, 184, 75, 0.12);
+  --text: #1a1a1a;
+  --text-dim: #888;
+  --green: #4ecb71;
+  --red: #e05252;
+  --overlay-bg: rgba(240, 240, 240, 0.95);
+  --grid-line: rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="dark"] {
   --bg: #0f0f0f;
   --surface: #c6e4eb;
   --surface-2: #151d65;
   --border: #2a2a2a;
   --border-bright: #3a3a3a;
-  --accent: #e8b84b;
-  --accent-glow: rgba(232, 184, 75, 0.12);
   --text: #dedad3;
   --text-dim: #555;
-  --green: #4ecb71;
-  --red: #e05252;
+  --overlay-bg: rgba(16, 16, 16, 0.93);
+  --grid-line: rgba(255, 255, 255, 0.018);
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -269,8 +283,8 @@ body {
   height: 100%;
   background-color: var(--surface);
   background-image:
-    linear-gradient(rgba(255, 255, 255, 0.018) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.018) 1px, transparent 1px);
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
   background-size: 48px 48px;
   overflow: hidden;
 }
@@ -329,7 +343,7 @@ body {
   top: 14px;
   right: 14px;
   z-index: 10;
-  background: rgba(22, 22, 22, 0.92);
+  background: var(--overlay-bg);
   border: 1px solid var(--border-bright);
   border-radius: 8px;
   padding: 10px 14px;
@@ -376,7 +390,7 @@ body {
   top: 14px;
   right: 14px;
   z-index: 10;
-  background: rgba(16, 16, 16, 0.93);
+  background: var(--overlay-bg);
   border: 1px solid var(--border-bright);
   border-radius: 8px;
   padding: 10px 14px;
@@ -619,14 +633,14 @@ body {
 
 /* Score chip — shown for role=user in all page headers (SCORE-05) */
 .score-chip {
-  background: #161616;
-  border: 1px solid #2a2a2a;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
   border-radius: 4px;
   padding: 4px 8px;
   font-family: 'JetBrains Mono', monospace;
   font-size: 14px;
   font-weight: 400;
-  color: #888;
+  color: var(--text-dim);
   letter-spacing: 0.06em;
   line-height: 1;
   flex-shrink: 0;
@@ -650,4 +664,20 @@ body {
 
 .btn-end-session:hover {
   color: var(--red);
+}
+
+.btn-theme-toggle {
+  background: transparent;
+  border: none;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  color: var(--text-dim);
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.15s;
+  flex-shrink: 0;
+  line-height: 1;
+}
+.btn-theme-toggle:hover {
+  color: var(--accent);
 }
