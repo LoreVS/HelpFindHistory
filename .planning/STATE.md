@@ -5,7 +5,7 @@
 Phase: 5 — Scoring
 Plan: 3 of 3 complete
 Status: Complete
-Last activity: 2026-04-30 — Phase 5 Plan 3 complete (scoring UI: reward input, AttemptRow with canvas preview + approve/reject workflow, score chip in all headers)
+Last activity: 2026-05-01 - Completed quick task 260501-djv: Add hints toggle button for fragment fit suggestions (contourAnalysis)
 
 ## Progress Bar
 
@@ -90,6 +90,7 @@ None.
 | 260428-n51 | Fix canvas aspect ratio and prevent duplicate publish | 2026-04-28 | 69e070d | [260428-n51-fix-canvas-aspect-ratio-and-prevent-duplicate-publish](.planning/quick/260428-n51-fix-canvas-aspect-ratio-and-prevent-duplicate-publish/) |
 | 260429-27u | Post-publish redirect and My Finished Projects section | 2026-04-28 | 5b08495 | [260429-27u-post-publish-redirect-and-my-finished-projects-section](.planning/quick/260429-27u-post-publish-redirect-and-my-finished-projects-section/) |
 | 260429-2ey | Clear data script and filter submitted projects from main list | 2026-04-29 | ebc160f | [260429-2ey-clear-data-script-and-filter-submitted-projects](.planning/quick/260429-2ey-clear-data-script-and-filter-submitted-projects/) |
+| 260501-djv | Add hints toggle button for fragment fit suggestions (contourAnalysis) | 2026-05-01 | fde2cec | [260501-djv-hints-toggle-button](.planning/quick/260501-djv-hints-toggle-button/) |
 
 ---
 _Last updated: 2026-04-30 — Completed Phase 5 Plan 3: scoring UI (reward input, AttemptRow canvas preview + approve/reject workflow, score chip in all headers). Phase 5 complete — all 5 phases of v1.1 complete._
