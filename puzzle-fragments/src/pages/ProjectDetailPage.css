@@ -143,6 +143,29 @@
 .btn-close-project:hover:not(:disabled) { background: #cc4444; color: #fff; }
 .btn-close-project:disabled { opacity: 0.4; cursor: not-allowed; }
 
+/* Hints toggle — inside canvas-toolbar-actions */
+.btn-hints-toggle {
+  background: transparent;
+  border: 1px solid #555;
+  color: #555;
+  padding: 5px 14px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.btn-hints-toggle.btn-hints-toggle--on {
+  border-color: #00bcd4;
+  color: #00bcd4;
+}
+
+.btn-hints-toggle:hover {
+  border-color: #00bcd4;
+  color: #00bcd4;
+}
+
 /* Canvas fill area — inherits .canvas-wrap from App.css */
 .detail-canvas-area .canvas-wrap {
   flex: 1;

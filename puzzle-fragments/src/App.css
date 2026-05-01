@@ -417,6 +417,37 @@ body {
   flex-shrink: 0;
 }
 
+/* Hints toggle — floating in canvas-wrap (top-left) */
+.hints-toggle-wrap {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 10;
+}
+
+.btn-hints-toggle {
+  background: transparent;
+  border: 1px solid #555;
+  color: #555;
+  padding: 5px 12px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.btn-hints-toggle.btn-hints-toggle--on {
+  border-color: #00bcd4;
+  color: #00bcd4;
+}
+
+.btn-hints-toggle:hover {
+  border-color: #00bcd4;
+  color: #00bcd4;
+}
+
 /* ── Auth pages ──────────────────────────────── */
 
 .auth-page {
