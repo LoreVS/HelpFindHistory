@@ -14,6 +14,15 @@ import './ProjectDetailPage.css'
 
 const SERVER = 'http://localhost:3001'
 
+function uaPlural(n, one, few, many) {
+  const m = n % 100
+  const d = n % 10
+  if (m >= 11 && m <= 19) return many
+  if (d === 1) return one
+  if (d >= 2 && d <= 4) return few
+  return many
+}
+
 /** Convert DB storage_path to a servable URL */
 function toSrc(storagePath) {
   // storage_path: "data/uploads/3/1714000000-photo.png"
@@ -155,7 +164,7 @@ function FragmentNode({ fragment, isSelected, ownSegments, matchSegments, onSele
   )
 }
 
-function ProjectCanvas({ fragments, onFragmentUpdate, readOnly = false, emptyMessage = 'No fragments.', showHints = true }) {
+function ProjectCanvas({ fragments, onFragmentUpdate, readOnly = false, emptyMessage = 'Немає фрагментів.', showHints = true }) {
   const containerRef = useRef(null)
   const stageRef     = useRef(null)
   const trRef        = useRef(null)
@@ -397,7 +406,7 @@ export default function ProjectDetailPage() {
   // D-09: Close Project button
   async function handleClose() {
     if (!currentProject) return
-    if (!window.confirm('Close this project? It will become read-only.')) return
+    if (!window.confirm('Закрити проєкт? Він стане доступним лише для перегляду.')) return
     setClosing(true)
     try {
       await closeProject(currentProject.id)
@@ -441,7 +450,7 @@ export default function ProjectDetailPage() {
       setIsPublished(true)
       navigate('/projects')
     } catch (err) {
-      setSaveMsg('Publish failed: ' + err.message)
+      setSaveMsg('Публікація не вдалась: ' + err.message)
     } finally {
       setPublishing(false)
     }
@@ -458,9 +467,9 @@ export default function ProjectDetailPage() {
     return (
       <div className="detail-page">
         <header className="detail-header">
-          <button className="btn-back" onClick={() => navigate('/projects')}>← Projects</button>
+          <button className="btn-back" onClick={() => navigate('/projects')}>← Проєкти</button>
         </header>
-        <p className="detail-loading">Loading project…</p>
+        <p className="detail-loading">Завантаження проєкту…</p>
       </div>
     )
   }
@@ -469,9 +478,9 @@ export default function ProjectDetailPage() {
     return (
       <div className="detail-page">
         <header className="detail-header">
-          <button className="btn-back" onClick={() => navigate('/projects')}>← Projects</button>
+          <button className="btn-back" onClick={() => navigate('/projects')}>← Проєкти</button>
         </header>
-        <p className="detail-error">{error || 'Project not found.'}</p>
+        <p className="detail-error">{error || 'Проєкт не знайдено.'}</p>
       </div>
     )
   }
@@ -482,7 +491,7 @@ export default function ProjectDetailPage() {
       <header className="detail-header">
         <div className="detail-header-left">
           <button className="btn-back" onClick={() => navigate('/projects')} type="button">
-            ← Projects
+            ← Проєкти
           </button>
           <h1 className="detail-title">{currentProject.name}</h1>
           <span className={`detail-status detail-status--${currentProject.status}`}>
@@ -490,7 +499,7 @@ export default function ProjectDetailPage() {
           </span>
         </div>
         <div className="detail-header-right">
-          {role === 'admin' && <span className="admin-badge">ADMIN</span>}
+          {role === 'admin' && <span className="admin-badge">АДМІН</span>}
           {role === 'user' && (
             <span className="score-chip">&#9733; {user?.score ?? 0}</span>
           )}
@@ -503,7 +512,7 @@ export default function ProjectDetailPage() {
             {theme === 'dark' ? '☀' : '☾'}
           </button>
           <button className="btn-end-session" onClick={handleEndSession} type="button">
-            END SESSION
+            ЗАВЕРШИТИ СЕСІЮ
           </button>
         </div>
       </header>
@@ -524,7 +533,7 @@ export default function ProjectDetailPage() {
           {/* Canvas header with Save Layout + Close Project (admin) / Save Attempt + Publish Attempt (user) */}
           <div className="canvas-toolbar">
             <span className="canvas-toolbar-title">
-              Fragment Canvas &nbsp;·&nbsp; {canvasFragments.length} fragment{canvasFragments.length !== 1 ? 's' : ''}
+              {`Полотно · ${canvasFragments.length} ${uaPlural(canvasFragments.length, 'уламок', 'уламки', 'уламків')}`}
             </span>
             <div className="canvas-toolbar-actions">
               {!isClosed && (
@@ -532,9 +541,9 @@ export default function ProjectDetailPage() {
                   className={`btn-hints-toggle${showHints ? ' btn-hints-toggle--on' : ''}`}
                   onClick={() => setShowHints(v => !v)}
                   type="button"
-                  title={showHints ? 'Hide fit hints' : 'Show fit hints'}
+                  title={showHints ? 'Приховати підказки' : 'Показати підказки'}
                 >
-                  {showHints ? 'Hints ON' : 'Hints OFF'}
+                  {showHints ? 'Підказки УВІМК' : 'Підказки ВИМК'}
                 </button>
               )}
               {/* Admin save/close controls */}
@@ -548,7 +557,7 @@ export default function ProjectDetailPage() {
                     disabled={saving || isClosed}
                     type="button"
                   >
-                    {saving ? 'Saving…' : 'Save Layout'}
+                    {saving ? 'Збереження…' : 'Зберегти розташування'}
                   </button>
                   {/* D-09: Close Project (admin only) */}
                   {!isClosed && (
@@ -558,7 +567,7 @@ export default function ProjectDetailPage() {
                       disabled={closing}
                       type="button"
                     >
-                      {closing ? 'Closing…' : 'Close Project'}
+                      {closing ? 'Закриття…' : 'Закрити проєкт'}
                     </button>
                   )}
                 </>
@@ -567,7 +576,7 @@ export default function ProjectDetailPage() {
               {role !== 'admin' && !isClosed && (
                 <>
                   {saveMsg && (
-                    <span className={`save-msg${saveMsg.startsWith('Save failed') || saveMsg.startsWith('Publish failed') ? ' save-msg--error' : ''}`}>
+                    <span className={`save-msg${saveMsg.startsWith('Save failed') || saveMsg.startsWith('Публікація не вдалась') ? ' save-msg--error' : ''}`}>
                       {saveMsg}
                     </span>
                   )}
@@ -577,7 +586,7 @@ export default function ProjectDetailPage() {
                     disabled={saving || isPublished}
                     type="button"
                   >
-                    {saving ? 'Saving…' : 'Save Attempt'}
+                    {saving ? 'Збереження…' : 'Зберегти спробу'}
                   </button>
                   {!isPublished && (
                     <button
@@ -586,14 +595,14 @@ export default function ProjectDetailPage() {
                       disabled={publishing}
                       type="button"
                     >
-                      {publishing ? 'Publishing…' : 'Publish Attempt'}
+                      {publishing ? 'Публікація…' : 'Опублікувати спробу'}
                     </button>
                   )}
                 </>
               )}
               {/* COLLAB-05: Read-only label for closed project canvas (non-admin) */}
               {isClosed && role !== 'admin' && (
-                <span className="canvas-toolbar-readonly">READ-ONLY · Approved Solution</span>
+                <span className="canvas-toolbar-readonly">ТІЛЬКИ ПЕРЕГЛЯД · Схвалене рішення</span>
               )}
             </div>
           </div>
@@ -606,17 +615,17 @@ export default function ProjectDetailPage() {
             showHints={showHints}
             emptyMessage={
               isClosed
-                ? 'No fragments in this project.'
+                ? 'У цьому проєкті немає фрагментів.'
                 : role === 'admin'
-                  ? 'Upload fragment photos using the panel on the left'
-                  : "No fragments loaded. The archaeologist hasn't uploaded any yet."
+                  ? 'Завантажте фото фрагментів через панель ліворуч'
+                  : 'Фрагменти ще не завантажено.'
             }
           />
 
           {/* COLLAB-05: D-17 Solver attribution */}
           {isClosed && currentProject.solution && (
             <div className="canvas-solver">
-              SOLVED BY: <span className="canvas-solver-email">{currentProject.solution.submitter_email}</span>
+              РОЗГАДАНО: <span className="canvas-solver-email">{currentProject.solution.submitter_email}</span>
             </div>
           )}
         </div>
@@ -625,17 +634,17 @@ export default function ProjectDetailPage() {
       {/* ── Section 2: Submitted Attempts (D-07, D-08) — admin only ── */}
       {role === 'admin' && (
         <div className="detail-attempts-section">
-          <h2 className="attempts-title">Submitted Attempts</h2>
+          <h2 className="attempts-title">Подані спроби</h2>
           {currentProject.attempts.length === 0 ? (
-            <p className="attempts-empty">No attempts submitted yet.</p>
+            <p className="attempts-empty">Жодної спроби ще не подано.</p>
           ) : (
             <table className="attempts-table">
               <thead>
                 <tr>
-                  <th>Submitter</th>
-                  <th>Status</th>
-                  <th>Submitted</th>
-                  <th>Actions</th>
+                  <th>Учасник</th>
+                  <th>Статус</th>
+                  <th>Подано</th>
+                  <th>Дії</th>
                 </tr>
               </thead>
               <tbody>
@@ -652,9 +661,9 @@ export default function ProjectDetailPage() {
       {showPublishConfirm && (
         <div className="attempt-modal-backdrop" onClick={() => setShowPublishConfirm(false)}>
           <div className="attempt-modal" onClick={(e) => e.stopPropagation()}>
-            <h3>Publish attempt?</h3>
+            <h3>Опублікувати спробу?</h3>
             <p className="publish-confirm-body">
-              Once published, your arrangement is locked and cannot be edited.
+              Після публікації ваше розташування буде заблоковано і редагування стане недоступним.
             </p>
             <div className="attempt-modal-actions">
               <button
@@ -662,14 +671,14 @@ export default function ProjectDetailPage() {
                 onClick={handlePublishAttempt}
                 type="button"
               >
-                Publish now
+                Опублікувати
               </button>
               <button
                 className="btn-modal-close"
                 onClick={() => setShowPublishConfirm(false)}
                 type="button"
               >
-                Keep editing
+                Продовжити редагування
               </button>
             </div>
           </div>
@@ -742,7 +751,7 @@ function AttemptRow({ attempt, currentProject }) {
           </span>
         </td>
         <td>{attempt.submitted_at ? new Date(attempt.submitted_at).toLocaleString() : '—'}</td>
-        <td><span className="attempt-view-hint">view →</span></td>
+        <td><span className="attempt-view-hint">переглянути →</span></td>
       </tr>
 
       {/* Attempt review modal with canvas preview (D-04, D-05, D-06) */}
@@ -754,7 +763,7 @@ function AttemptRow({ attempt, currentProject }) {
                 className="attempt-modal attempt-modal--canvas"
                 onClick={(e) => e.stopPropagation()}
               >
-                <h3>Attempt by {attempt.submitter_email}</h3>
+                <h3>Спроба від {attempt.submitter_email}</h3>
 
                 {/* Read-only canvas preview — reuses ProjectCanvas with readOnly=true (D-04) */}
                 <div className="attempt-modal-canvas">
@@ -766,7 +775,7 @@ function AttemptRow({ attempt, currentProject }) {
                     />
                   ) : (
                     <p style={{ color: '#888', fontSize: '0.83rem', margin: 0 }}>
-                      Loading canvas…
+                      Завантаження полотна…
                     </p>
                   )}
                 </div>
@@ -779,7 +788,7 @@ function AttemptRow({ attempt, currentProject }) {
                       disabled={attempt.status !== 'published' || approving}
                       type="button"
                     >
-                      Approve Attempt
+                      Схвалити спробу
                     </button>
                   )}
                   {role === 'admin' && (
@@ -789,7 +798,7 @@ function AttemptRow({ attempt, currentProject }) {
                       disabled={attempt.status !== 'published' || rejecting}
                       type="button"
                     >
-                      {rejecting ? 'Rejecting…' : 'Reject Attempt'}
+                      {rejecting ? 'Відхилення…' : 'Відхилити спробу'}
                     </button>
                   )}
                   <button
@@ -797,7 +806,7 @@ function AttemptRow({ attempt, currentProject }) {
                     onClick={() => setShowModal(false)}
                     type="button"
                   >
-                    Close
+                    Закрити
                   </button>
                 </div>
               </div>
@@ -815,9 +824,9 @@ function AttemptRow({ attempt, currentProject }) {
               onClick={(e) => e.stopPropagation()}
             >
               <div className="approve-confirm-modal">
-                <h3>Approve this attempt?</h3>
+                <h3>Схвалити цю спробу?</h3>
                 <p className="approve-confirm-body">
-                  This will close the project and award {currentProject?.reward ?? '?'} pts to {attempt.submitter_email}.
+                  {`Це закриє проєкт та нарахує ${currentProject?.reward ?? '?'} балів ${attempt.submitter_email}.`}
                 </p>
                 <div className="attempt-modal-actions">
                   <button
@@ -826,14 +835,14 @@ function AttemptRow({ attempt, currentProject }) {
                     disabled={approving}
                     type="button"
                   >
-                    {approving ? 'Approving…' : 'Confirm Approve'}
+                    {approving ? 'Схвалення…' : 'Підтвердити'}
                   </button>
                   <button
                     className="btn-modal-close"
                     onClick={() => setShowConfirm(false)}
                     type="button"
                   >
-                    Keep reviewing
+                    Продовжити перегляд
                   </button>
                 </div>
               </div>
