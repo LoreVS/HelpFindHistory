@@ -17,7 +17,7 @@ export default function LoginPage() {
   async function handleSubmit(e) {
     e.preventDefault()
     if (!email.trim() || !password) {
-      setError('email and password are required')
+      setError('необхідно вказати пошту та пароль')
       return
     }
     setLoading(true)
@@ -30,13 +30,13 @@ export default function LoginPage() {
       })
       const data = await res.json()
       if (!res.ok) {
-        setError(data.error ?? 'server unavailable — try again')
+        setError(data.error ?? 'сервер недоступний — спробуйте знову')
         return
       }
       login(data.token, data.user)
       navigate('/')
     } catch {
-      setError('server unavailable — try again')
+      setError('сервер недоступний — спробуйте знову')
     } finally {
       setLoading(false)
     }
@@ -46,10 +46,10 @@ export default function LoginPage() {
     <div className="auth-page">
       <div className="auth-card">
         <div className="auth-brand">
-          <span className="logo">PUZZLE FORGE</span>
+          <span className="logo">ARCHEO-FIT</span>
           <span className="auth-tagline">// відновлення форми з уламків</span>
         </div>
-        <h2 className="auth-heading">ACCESS TERMINAL</h2>
+        <h2 className="auth-heading">ВХІД ДО СИСТЕМИ</h2>
 
         <form onSubmit={handleSubmit} noValidate>
           <div className="auth-fields">
@@ -60,7 +60,7 @@ export default function LoginPage() {
             )}
 
             <div className="auth-field">
-              <label className="auth-label" htmlFor="login-email">email</label>
+              <label className="auth-label" htmlFor="login-email">Електронна пошта</label>
               <input
                 id="login-email"
                 type="email"
@@ -74,7 +74,7 @@ export default function LoginPage() {
             </div>
 
             <div className="auth-field">
-              <label className="auth-label" htmlFor="login-password">password</label>
+              <label className="auth-label" htmlFor="login-password">Пароль</label>
               <input
                 id="login-password"
                 type="password"
@@ -92,14 +92,14 @@ export default function LoginPage() {
               className="auth-btn"
               disabled={loading}
             >
-              {loading ? 'AUTHENTICATING…' : 'AUTHENTICATE'}
+              {loading ? 'ВХІД…' : 'УВІЙТИ'}
             </button>
           </div>
         </form>
 
         <p className="auth-nav-link">
-          Don't have an account?{' '}
-          <Link to="/register" className="auth-link">Register →</Link>
+          Немає акаунту?{' '}
+          <Link to="/register" className="auth-link">Реєстрація →</Link>
         </p>
       </div>
     </div>
