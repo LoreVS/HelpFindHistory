@@ -28,7 +28,7 @@ function CanvasApp() {
   return (
     <div className="app">
       <header className="header">
-        <h1 className="logo">PUZZLE FORGE</h1>
+        <h1 className="logo">ARCHEO-FIT</h1>
         <span className="tagline">// відновлення форми з уламків</span>
         {role === 'admin' && (
           <span className="admin-badge">ADMIN</span>
@@ -55,7 +55,7 @@ function CanvasApp() {
             onClick={handleEndSession}
             type="button"
           >
-            END SESSION
+            ЗАВЕРШИТИ СЕСІЮ
           </button>
         )}
       </header>
