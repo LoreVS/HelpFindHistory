@@ -7,6 +7,7 @@ import RegisterPage from './pages/RegisterPage'
 import ProjectsPage from './pages/ProjectsPage'
 import ProjectDetailPage from './pages/ProjectDetailPage'
 import { useRole } from './hooks/useRole'
+import { useTheme } from './hooks/useTheme'
 import useAuthStore from './store/authStore'
 import './App.css'
 
@@ -17,6 +18,7 @@ function CanvasApp() {
   const logout = useAuthStore((state) => state.logout)
   const user = useAuthStore((state) => state.user)
   const navigate = useNavigate()
+  const { theme, toggleTheme } = useTheme()
 
   function handleEndSession() {
     logout()
@@ -37,6 +39,16 @@ function CanvasApp() {
         <div className="header-hint">
           <kbd>drag</kbd> переміщення &nbsp;·&nbsp; <kbd>corner</kbd> масштаб &nbsp;·&nbsp; <kbd>↻</kbd> ротація
         </div>
+        {token && (
+          <button
+            className="btn-theme-toggle"
+            onClick={toggleTheme}
+            type="button"
+            title="Toggle theme"
+          >
+            {theme === 'dark' ? '☀' : '☾'}
+          </button>
+        )}
         {token && (
           <button
             className="btn-end-session"

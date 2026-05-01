@@ -7,6 +7,7 @@ import {
 import useProjectStore from '../store/useProjectStore'
 import useAuthStore from '../store/authStore'
 import { useRole } from '../hooks/useRole'
+import { useTheme } from '../hooks/useTheme'
 import { matchContourSegments, extractContourSegments } from '../utils/contourAnalysis'
 import ProjectDropzone from '../components/ProjectDropzone'
 import './ProjectDetailPage.css'
@@ -273,6 +274,7 @@ export default function ProjectDetailPage() {
   const navigate  = useNavigate()
   const role      = useRole()
   const logout    = useAuthStore((state) => state.logout)
+  const { theme, toggleTheme } = useTheme()
 
   const { currentProject, loading, error, fetchProject, saveLayout, closeProject,
           fetchUserDraft, saveDraft, publishAttempt, approveAttempt, rejectAttempt, fetchUserScore } = useProjectStore()
@@ -492,6 +494,14 @@ export default function ProjectDetailPage() {
           {role === 'user' && (
             <span className="score-chip">&#9733; {user?.score ?? 0}</span>
           )}
+          <button
+            className="btn-theme-toggle"
+            onClick={toggleTheme}
+            type="button"
+            title="Toggle theme"
+          >
+            {theme === 'dark' ? '☀' : '☾'}
+          </button>
           <button className="btn-end-session" onClick={handleEndSession} type="button">
             END SESSION
           </button>
