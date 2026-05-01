@@ -14,7 +14,9 @@ export default function ProjectsPage() {
   const { projects, loading, error, fetchProjects, createProject, myAttempts, fetchMyAttempts, fetchUserScore } = useProjectStore()
 
   const finishedProjectIds = new Set(myAttempts.map((a) => a.project_id))
-  const visibleProjects = projects.filter((p) => !finishedProjectIds.has(p.id))
+  const visibleProjects = role === 'admin'
+    ? projects
+    : projects.filter((p) => !finishedProjectIds.has(p.id))
 
   // New Project form state
   const [showForm, setShowForm]       = useState(false)
