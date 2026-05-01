@@ -91,6 +91,7 @@ None.
 | 260429-27u | Post-publish redirect and My Finished Projects section | 2026-04-28 | 5b08495 | [260429-27u-post-publish-redirect-and-my-finished-projects-section](.planning/quick/260429-27u-post-publish-redirect-and-my-finished-projects-section/) |
 | 260429-2ey | Clear data script and filter submitted projects from main list | 2026-04-29 | ebc160f | [260429-2ey-clear-data-script-and-filter-submitted-projects](.planning/quick/260429-2ey-clear-data-script-and-filter-submitted-projects/) |
 | 260501-djv | Add hints toggle button for fragment fit suggestions (contourAnalysis) | 2026-05-01 | fde2cec | [260501-djv-hints-toggle-button](.planning/quick/260501-djv-hints-toggle-button/) |
+| 260501-dxm | Fix hints: compute segments from server images on load, hide toggle in read-only | 2026-05-01 | 96ee20e | [260501-dxm-fix-hints-segments-readonly](.planning/quick/260501-dxm-fix-hints-segments-readonly/) |
 
 ---
-_Last updated: 2026-04-30 — Completed Phase 5 Plan 3: scoring UI (reward input, AttemptRow canvas preview + approve/reject workflow, score chip in all headers). Phase 5 complete — all 5 phases of v1.1 complete._
+_Last updated: 2026-05-01 — Fixed hints not showing in /projects/:id (segments now computed from server images on load). Toggle hidden in read-only mode._
