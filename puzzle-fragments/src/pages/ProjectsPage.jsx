@@ -6,6 +6,15 @@ import { useRole } from '../hooks/useRole'
 import { useTheme } from '../hooks/useTheme'
 import './ProjectsPage.css'
 
+function uaPlural(n, one, few, many) {
+  const m = n % 100
+  const d = n % 10
+  if (m >= 11 && m <= 19) return many
+  if (d === 1) return one
+  if (d >= 2 && d <= 4) return few
+  return many
+}
+
 export default function ProjectsPage() {
   const navigate  = useNavigate()
   const role      = useRole()
@@ -38,7 +47,7 @@ export default function ProjectsPage() {
   }, [fetchProjects, fetchMyAttempts, fetchUserScore, role])
 
   function attemptStatusLabel(status) {
-    if (status === 'published') return 'on review'
+    if (status === 'published') return 'на перевірці'
     return status  // 'approved' | 'rejected' pass through as-is
   }
 
@@ -67,11 +76,11 @@ export default function ProjectsPage() {
       {/* ── Header ── */}
       <header className="projects-header">
         <div className="projects-header-left">
-          <h1 className="logo">PUZZLE FORGE</h1>
+          <h1 className="logo">ARCHEO-FIT</h1>
           <span className="tagline">// відновлення форми з уламків</span>
         </div>
         <div className="projects-header-right">
-          {role === 'admin' && <span className="admin-badge">ADMIN</span>}
+          {role === 'admin' && <span className="admin-badge">АДМІН</span>}
           {role === 'user' && (
             <span className="score-chip">&#9733; {user?.score ?? 0}</span>
           )}
@@ -84,21 +93,21 @@ export default function ProjectsPage() {
             {theme === 'dark' ? '☀' : '☾'}
           </button>
           <button className="btn-end-session" onClick={handleEndSession} type="button">
-            END SESSION
+            ЗАВЕРШИТИ СЕСІЮ
           </button>
         </div>
       </header>
 
       {/* ── Page title + New Project button (admin only, D-05, D-06) ── */}
       <div className="projects-toolbar">
-        <h2 className="projects-title">Projects</h2>
+        <h2 className="projects-title">Проєкти</h2>
         {role === 'admin' && (
           <button
             className="btn-new-project"
             onClick={() => { setShowForm((v) => !v); setCreateError(null) }}
             type="button"
           >
-            {showForm ? 'Cancel' : '+ New Project'}
+            {showForm ? 'Скасувати' : '+ Новий проєкт'}
           </button>
         )}
       </div>
@@ -107,55 +116,55 @@ export default function ProjectsPage() {
       {showForm && role === 'admin' && (
         <form className="new-project-form" onSubmit={handleCreate}>
           <div className="form-group">
-            <label htmlFor="proj-name">Project Name</label>
+            <label htmlFor="proj-name">Назва проєкту</label>
             <input
               id="proj-name"
               type="text"
               value={newName}
               onChange={(e) => setNewName(e.target.value)}
-              placeholder="e.g. Amphora Restoration 2024"
+              placeholder="напр. Відновлення амфори 2024"
               required
               autoFocus
             />
           </div>
           <div className="form-group">
-            <label htmlFor="proj-desc">Description</label>
+            <label htmlFor="proj-desc">Опис</label>
             <textarea
               id="proj-desc"
               value={newDesc}
               onChange={(e) => setNewDesc(e.target.value)}
-              placeholder="Brief description of the artifact..."
+              placeholder="Короткий опис артефакту..."
               rows={3}
             />
           </div>
           <div className="form-group">
-            <label htmlFor="proj-reward">Reward (pts)</label>
+            <label htmlFor="proj-reward">Нагорода (бали)</label>
             <input
               id="proj-reward"
               type="number"
               min={1}
               value={newReward}
               onChange={(e) => setNewReward(e.target.value)}
-              placeholder="e.g. 5"
+              placeholder="напр. 5"
               required
             />
           </div>
           {createError && <p className="form-error">{createError}</p>}
           <div className="form-actions">
             <button type="submit" className="btn-create" disabled={creating || !newName.trim()}>
-              {creating ? 'Creating…' : 'Create Project'}
+              {creating ? 'Створення…' : 'Створити проєкт'}
             </button>
           </div>
         </form>
       )}
 
       {/* ── State feedback ── */}
-      {loading && <p className="projects-loading">Loading projects…</p>}
+      {loading && <p className="projects-loading">Завантаження проєктів…</p>}
       {error && <p className="projects-error">{error}</p>}
 
       {/* ── Card grid (D-04, D-06) ── */}
       {!loading && visibleProjects.length === 0 && (
-        <p className="projects-empty">No projects yet. Create one above.</p>
+        <p className="projects-empty">Проєктів ще немає. Створіть перший вище.</p>
       )}
 
       <div className="projects-grid">
@@ -185,8 +194,8 @@ export default function ProjectsPage() {
             <div className="card-footer">
               <span className="card-fragments">
                 {role === 'admin'
-                  ? `${project.attempt_count ?? 0} attempt${project.attempt_count !== 1 ? 's' : ''}`
-                  : `${project.fragment_count ?? 0} fragment${project.fragment_count !== 1 ? 's' : ''}`}
+                  ? (() => { const n = project.attempt_count ?? 0; return `${n} ${uaPlural(n, 'спроба', 'спроби', 'спроб')}` })()
+                  : (() => { const n = project.fragment_count ?? 0; return `${n} ${uaPlural(n, 'уламок', 'уламки', 'уламків')}` })()}
               </span>
               <span className="card-date">
                 {new Date(project.created_at).toLocaleDateString()}
@@ -199,7 +208,7 @@ export default function ProjectsPage() {
       {/* ── My Finished Projects (COLLAB-04/06: non-admin users with submitted attempts) ── */}
       {role !== 'admin' && myAttempts.length > 0 && (
         <section className="finished-section">
-          <h2 className="finished-title">My Finished Projects</h2>
+          <h2 className="finished-title">Мої завершені проєкти</h2>
           <div className="projects-grid finished-grid">
             {myAttempts.map((attempt) => (
               <div
