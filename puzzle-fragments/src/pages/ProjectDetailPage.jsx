@@ -7,7 +7,7 @@ import {
 import useProjectStore from '../store/useProjectStore'
 import useAuthStore from '../store/authStore'
 import { useRole } from '../hooks/useRole'
-import { matchContourSegments } from '../utils/contourAnalysis'
+import { matchContourSegments, extractContourSegments } from '../utils/contourAnalysis'
 import ProjectDropzone from '../components/ProjectDropzone'
 import './ProjectDetailPage.css'
 
@@ -57,18 +57,31 @@ function FragmentNode({ fragment, isSelected, ownSegments, matchSegments, onSele
     image.crossOrigin = 'anonymous'
     image.onload = () => {
       setImg(image)
-      // Correct display dimensions from actual image to preserve aspect ratio
       const MAX = 320
       const scale = Math.min(MAX / image.naturalWidth, MAX / image.naturalHeight, 1)
       const w = Math.round(image.naturalWidth * scale)
       const h = Math.round(image.naturalHeight * scale)
+
+      const updates = {}
       if (w !== fragment.width || h !== fragment.height) {
-        onUpdate(fragment.id, {
-          width: w, height: h,
-          originalWidth: image.naturalWidth,
-          originalHeight: image.naturalHeight,
-        })
+        updates.width = w
+        updates.height = h
+        updates.originalWidth = image.naturalWidth
+        updates.originalHeight = image.naturalHeight
       }
+
+      // Compute contour segments client-side if not stored (server fragments start with segments: [])
+      if (!fragment.segments?.length) {
+        const offscreen = document.createElement('canvas')
+        offscreen.width = image.naturalWidth
+        offscreen.height = image.naturalHeight
+        offscreen.getContext('2d').drawImage(image, 0, 0)
+        const { segments, centroid } = extractContourSegments(offscreen)
+        updates.segments = segments
+        updates.centroid = centroid
+      }
+
+      if (Object.keys(updates).length > 0) onUpdate(fragment.id, updates)
     }
     image.onerror = () => console.error('[ProjectCanvas] Failed to load:', fragment.src)
     image.src = fragment.src
@@ -504,14 +517,16 @@ export default function ProjectDetailPage() {
               Fragment Canvas &nbsp;·&nbsp; {canvasFragments.length} fragment{canvasFragments.length !== 1 ? 's' : ''}
             </span>
             <div className="canvas-toolbar-actions">
-              <button
-                className={`btn-hints-toggle${showHints ? ' btn-hints-toggle--on' : ''}`}
-                onClick={() => setShowHints(v => !v)}
-                type="button"
-                title={showHints ? 'Hide fit hints' : 'Show fit hints'}
-              >
-                {showHints ? 'Hints ON' : 'Hints OFF'}
-              </button>
+              {!isClosed && (
+                <button
+                  className={`btn-hints-toggle${showHints ? ' btn-hints-toggle--on' : ''}`}
+                  onClick={() => setShowHints(v => !v)}
+                  type="button"
+                  title={showHints ? 'Hide fit hints' : 'Show fit hints'}
+                >
+                  {showHints ? 'Hints ON' : 'Hints OFF'}
+                </button>
+              )}
               {/* Admin save/close controls */}
               {role === 'admin' && (
                 <>
