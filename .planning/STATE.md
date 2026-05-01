@@ -93,6 +93,7 @@ None.
 | 260501-djv | Add hints toggle button for fragment fit suggestions (contourAnalysis) | 2026-05-01 | fde2cec | [260501-djv-hints-toggle-button](.planning/quick/260501-djv-hints-toggle-button/) |
 | 260501-dxm | Fix hints: compute segments from server images on load, hide toggle in read-only | 2026-05-01 | 96ee20e | [260501-dxm-fix-hints-segments-readonly](.planning/quick/260501-dxm-fix-hints-segments-readonly/) |
 | 260501-a23 | make white theme, make button to switch themes, white theme by default | 2026-05-01 | cfb8f54 | [260501-a23-white-theme-switcher](.planning/quick/260501-a23-white-theme-switcher/) |
+| 260501-acc | Rename app to Archeo-FIT and translate all UI to Ukrainian | 2026-05-01 | 3aab618 | [260501-acc-archeo-fit-ukrainian-ui](.planning/quick/260501-acc-archeo-fit-ukrainian-ui/) |
 
 ---
-_Last updated: 2026-05-01 — Added white (light) theme as default with dark theme under [data-theme="dark"]. Theme toggle button in all 3 page headers. Persists to localStorage._
+_Last updated: 2026-05-01 — Renamed app to ARCHEO-FIT; all UI text translated to Ukrainian across 8 files._
