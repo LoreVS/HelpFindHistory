@@ -56,7 +56,7 @@ export default function ProjectDropzone({ projectId, onFragmentUploaded, disable
       >
         <input {...getInputProps()} />
         {disabled ? (
-          <p className="dz-hint">Project closed — uploads disabled</p>
+          <p className="dz-hint">Проєкт закрито — завантаження вимкнено</p>
         ) : isDragActive ? (
           <p className="dz-hint">Відпусти тут</p>
         ) : (
