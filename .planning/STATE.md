@@ -92,6 +92,7 @@ None.
 | 260429-2ey | Clear data script and filter submitted projects from main list | 2026-04-29 | ebc160f | [260429-2ey-clear-data-script-and-filter-submitted-projects](.planning/quick/260429-2ey-clear-data-script-and-filter-submitted-projects/) |
 | 260501-djv | Add hints toggle button for fragment fit suggestions (contourAnalysis) | 2026-05-01 | fde2cec | [260501-djv-hints-toggle-button](.planning/quick/260501-djv-hints-toggle-button/) |
 | 260501-dxm | Fix hints: compute segments from server images on load, hide toggle in read-only | 2026-05-01 | 96ee20e | [260501-dxm-fix-hints-segments-readonly](.planning/quick/260501-dxm-fix-hints-segments-readonly/) |
+| 260501-a23 | make white theme, make button to switch themes, white theme by default | 2026-05-01 | cfb8f54 | [260501-a23-white-theme-switcher](.planning/quick/260501-a23-white-theme-switcher/) |
 
 ---
-_Last updated: 2026-05-01 — Fixed hints not showing in /projects/:id (segments now computed from server images on load). Toggle hidden in read-only mode._
+_Last updated: 2026-05-01 — Added white (light) theme as default with dark theme under [data-theme="dark"]. Theme toggle button in all 3 page headers. Persists to localStorage._
