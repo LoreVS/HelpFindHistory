@@ -18,11 +18,11 @@ export default function RegisterPage() {
   async function handleSubmit(e) {
     e.preventDefault()
     if (!email.trim() || !password || !confirmPassword) {
-      setError('all fields are required')
+      setError('усі поля обов\'язкові')
       return
     }
     if (password !== confirmPassword) {
-      setError('passwords do not match')
+      setError('паролі не збігаються')
       return
     }
     setLoading(true)
@@ -35,14 +35,14 @@ export default function RegisterPage() {
       })
       const data = await res.json()
       if (!res.ok) {
-        setError(data.error ?? 'server unavailable — try again')
+        setError(data.error ?? 'сервер недоступний — спробуйте знову')
         return
       }
       // D-10: auto-login after successful register
       login(data.token, data.user)
       navigate('/')
     } catch {
-      setError('server unavailable — try again')
+      setError('сервер недоступний — спробуйте знову')
     } finally {
       setLoading(false)
     }
@@ -52,10 +52,10 @@ export default function RegisterPage() {
     <div className="auth-page">
       <div className="auth-card">
         <div className="auth-brand">
-          <span className="logo">PUZZLE FORGE</span>
+          <span className="logo">ARCHEO-FIT</span>
           <span className="auth-tagline">// відновлення форми з уламків</span>
         </div>
-        <h2 className="auth-heading">CREATE ACCOUNT</h2>
+        <h2 className="auth-heading">РЕЄСТРАЦІЯ</h2>
 
         <form onSubmit={handleSubmit} noValidate>
           <div className="auth-fields">
@@ -66,7 +66,7 @@ export default function RegisterPage() {
             )}
 
             <div className="auth-field">
-              <label className="auth-label" htmlFor="reg-email">email</label>
+              <label className="auth-label" htmlFor="reg-email">Електронна пошта</label>
               <input
                 id="reg-email"
                 type="email"
@@ -80,7 +80,7 @@ export default function RegisterPage() {
             </div>
 
             <div className="auth-field">
-              <label className="auth-label" htmlFor="reg-password">password</label>
+              <label className="auth-label" htmlFor="reg-password">Пароль</label>
               <input
                 id="reg-password"
                 type="password"
@@ -94,7 +94,7 @@ export default function RegisterPage() {
             </div>
 
             <div className="auth-field">
-              <label className="auth-label" htmlFor="reg-confirm">confirm password</label>
+              <label className="auth-label" htmlFor="reg-confirm">Підтвердження пароля</label>
               <input
                 id="reg-confirm"
                 type="password"
@@ -112,14 +112,14 @@ export default function RegisterPage() {
               className="auth-btn"
               disabled={loading}
             >
-              {loading ? 'REGISTERING…' : 'REGISTER ACCOUNT'}
+              {loading ? 'РЕЄСТРАЦІЯ…' : 'ЗАРЕЄСТРУВАТИСЯ'}
             </button>
           </div>
         </form>
 
         <p className="auth-nav-link">
-          Already have an account?{' '}
-          <Link to="/login" className="auth-link">Login →</Link>
+          Вже маєте акаунт?{' '}
+          <Link to="/login" className="auth-link">Увійти →</Link>
         </p>
       </div>
     </div>
