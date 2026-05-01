@@ -141,7 +141,7 @@ function FragmentNode({ fragment, isSelected, ownSegments, matchSegments, onSele
   )
 }
 
-function ProjectCanvas({ fragments, onFragmentUpdate, readOnly = false, emptyMessage = 'No fragments.' }) {
+function ProjectCanvas({ fragments, onFragmentUpdate, readOnly = false, emptyMessage = 'No fragments.', showHints = true }) {
   const containerRef = useRef(null)
   const stageRef     = useRef(null)
   const trRef        = useRef(null)
@@ -180,11 +180,31 @@ function ProjectCanvas({ fragments, onFragmentUpdate, readOnly = false, emptyMes
     if (e.target === e.target.getStage()) setSelectedId(null)
   }
 
+  const selectedFrag = fragments.find(f => f.id === selectedId)
+  const matchCount = Object.keys(segmentMatches).length
+
   return (
     <div ref={containerRef} className="canvas-wrap">
       {fragments.length === 0 && (
         <div className="canvas-empty">
           <span>{emptyMessage}</span>
+        </div>
+      )}
+      {showHints && selectedFrag?.segments?.length > 0 && (
+        <div className="seg-legend">
+          <div className="seg-legend-title">
+            {matchCount > 0
+              ? `Знайдено співпадінь: ${matchCount} уламків`
+              : 'Співпадінь не знайдено'}
+          </div>
+          <div className="seg-legend-list">
+            {selectedFrag.segments.map(seg => (
+              <span key={seg.index} className="seg-legend-item">
+                <span className="seg-dot" style={{ background: seg.color, boxShadow: `0 0 6px ${seg.color}` }} />
+                сегмент {seg.index + 1}
+              </span>
+            ))}
+          </div>
         </div>
       )}
       <Stage
@@ -197,8 +217,8 @@ function ProjectCanvas({ fragments, onFragmentUpdate, readOnly = false, emptyMes
         <Layer>
           {fragments.map((fragment) => {
             const isSelected = fragment.id === selectedId
-            const ownSegments = isSelected ? (fragment.segments ?? []) : []
-            const matchSegs = (!isSelected && selectedId)
+            const ownSegments = (isSelected && showHints) ? (fragment.segments ?? []) : []
+            const matchSegs = (!isSelected && selectedId && showHints)
               ? (segmentMatches[fragment.id] ?? []).map(m => {
                   const seg = fragment.segments?.find(s => s.index === m.otherSegIndex)
                   return seg ? { ...seg, color: m.color } : null
@@ -251,6 +271,7 @@ export default function ProjectDetailPage() {
   const [saving, setSaving]   = useState(false)
   const [saveMsg, setSaveMsg] = useState(null)
   const [closing, setClosing] = useState(false)
+  const [showHints, setShowHints] = useState(true)
 
   // Phase 4: user attempt state
   const [currentAttemptId, setCurrentAttemptId] = useState(null)
@@ -328,6 +349,8 @@ export default function ProjectDetailPage() {
       originalHeight: localData.originalHeight,
       width:  localData.width,
       height: localData.height,
+      segments: localData.segments ?? [],
+      centroid: localData.centroid ?? null,
     }])
   }, [canvasFragments.length])
 
@@ -481,6 +504,14 @@ export default function ProjectDetailPage() {
               Fragment Canvas &nbsp;·&nbsp; {canvasFragments.length} fragment{canvasFragments.length !== 1 ? 's' : ''}
             </span>
             <div className="canvas-toolbar-actions">
+              <button
+                className={`btn-hints-toggle${showHints ? ' btn-hints-toggle--on' : ''}`}
+                onClick={() => setShowHints(v => !v)}
+                type="button"
+                title={showHints ? 'Hide fit hints' : 'Show fit hints'}
+              >
+                {showHints ? 'Hints ON' : 'Hints OFF'}
+              </button>
               {/* Admin save/close controls */}
               {role === 'admin' && (
                 <>
@@ -547,6 +578,7 @@ export default function ProjectDetailPage() {
             fragments={canvasFragments}
             onFragmentUpdate={handleFragmentUpdate}
             readOnly={isClosed}
+            showHints={showHints}
             emptyMessage={
               isClosed
                 ? 'No fragments in this project.'
