@@ -50,9 +50,11 @@ router.post('/', requireAuth, requireRole('admin'), (req, res) => {
 router.get('/', requireAuth, (req, res) => {
   const isAdmin = req.user.role === 'admin'
   const projects = db.prepare(`
-    SELECT p.*, COUNT(f.id) AS fragment_count
+    SELECT p.*, COUNT(DISTINCT f.id) AS fragment_count,
+           COUNT(DISTINCT a.id) AS attempt_count
     FROM projects p
     LEFT JOIN fragments f ON f.project_id = p.id
+    LEFT JOIN attempts  a ON a.project_id = p.id
     ${isAdmin ? '' : "WHERE p.status = 'open'"}
     GROUP BY p.id
     ORDER BY p.created_at DESC

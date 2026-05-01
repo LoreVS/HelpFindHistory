@@ -173,7 +173,9 @@ export default function ProjectsPage() {
             )}
             <div className="card-footer">
               <span className="card-fragments">
-                {project.fragment_count ?? 0} fragment{project.fragment_count !== 1 ? 's' : ''}
+                {role === 'admin'
+                  ? `${project.attempt_count ?? 0} attempt${project.attempt_count !== 1 ? 's' : ''}`
+                  : `${project.fragment_count ?? 0} fragment${project.fragment_count !== 1 ? 's' : ''}`}
               </span>
               <span className="card-date">
                 {new Date(project.created_at).toLocaleDateString()}
