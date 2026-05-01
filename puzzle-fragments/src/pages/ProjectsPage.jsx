@@ -46,9 +46,17 @@ export default function ProjectsPage() {
     }
   }, [fetchProjects, fetchMyAttempts, fetchUserScore, role])
 
+  function projectStatusLabel(status) {
+    if (status === 'open') return 'відкритий'
+    if (status === 'closed') return 'закритий'
+    return status
+  }
+
   function attemptStatusLabel(status) {
     if (status === 'published') return 'на перевірці'
-    return status  // 'approved' | 'rejected' pass through as-is
+    if (status === 'approved') return 'схвалено'
+    if (status === 'rejected') return 'відхилено'
+    return status
   }
 
   async function handleCreate(e) {
@@ -181,7 +189,7 @@ export default function ProjectsPage() {
               <h3 className="card-name">{project.name}</h3>
               {/* D-04: status badge */}
               <span className={`card-status card-status--${project.status}`}>
-                {project.status}
+                {projectStatusLabel(project.status)}
               </span>
             </div>
             {project.description && (
@@ -222,7 +230,7 @@ export default function ProjectsPage() {
                 <div className="card-header">
                   <h3 className="card-name">{attempt.project_name}</h3>
                   <span className={`card-status card-status--${attempt.project_status}`}>
-                    {attempt.project_status}
+                    {projectStatusLabel(attempt.project_status)}
                   </span>
                 </div>
                 <div className="card-footer">

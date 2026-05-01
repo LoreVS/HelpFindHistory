@@ -23,6 +23,19 @@ function uaPlural(n, one, few, many) {
   return many
 }
 
+function projectStatusLabel(status) {
+  if (status === 'open') return 'відкритий'
+  if (status === 'closed') return 'закритий'
+  return status
+}
+
+function attemptStatusLabel(status) {
+  if (status === 'published') return 'на перевірці'
+  if (status === 'approved') return 'схвалено'
+  if (status === 'rejected') return 'відхилено'
+  return status
+}
+
 /** Convert DB storage_path to a servable URL */
 function toSrc(storagePath) {
   // storage_path: "data/uploads/3/1714000000-photo.png"
@@ -495,7 +508,7 @@ export default function ProjectDetailPage() {
           </button>
           <h1 className="detail-title">{currentProject.name}</h1>
           <span className={`detail-status detail-status--${currentProject.status}`}>
-            {currentProject.status}
+            {projectStatusLabel(currentProject.status)}
           </span>
         </div>
         <div className="detail-header-right">
@@ -747,7 +760,7 @@ function AttemptRow({ attempt, currentProject }) {
         <td>{attempt.submitter_email}</td>
         <td>
           <span className={`attempt-status attempt-status--${attempt.status}`}>
-            {attempt.status}
+            {attemptStatusLabel(attempt.status)}
           </span>
         </td>
         <td>{attempt.submitted_at ? new Date(attempt.submitted_at).toLocaleString() : '—'}</td>
