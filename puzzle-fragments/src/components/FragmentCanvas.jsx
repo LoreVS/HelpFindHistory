@@ -164,9 +164,9 @@ export default function FragmentCanvas() {
           className={`btn-hints-toggle${showHints ? ' btn-hints-toggle--on' : ''}`}
           onClick={() => setShowHints(v => !v)}
           type="button"
-          title={showHints ? 'Hide fit hints' : 'Show fit hints'}
+          title={showHints ? 'Приховати підказки' : 'Показати підказки'}
         >
-          {showHints ? 'Hints ON' : 'Hints OFF'}
+          {showHints ? 'Підказки УВІМК' : 'Підказки ВИМК'}
         </button>
       </div>
 
